@@ -4,37 +4,34 @@ import ru.liga.Structure.kurs_table.Kurs;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 public class FileProcces {
-
-    public ArrayList<Kurs> getDataFromFile(String  path_to_file) {
+    /**
+     *Класс getDataFromFile производит извлечение данных курса валюты из csv файла
+     *@param path_to_file - путь до файла с данными
+     */
+    public ArrayList<Kurs> getDataFromFile(String path_to_file) {
         try {
-            // CSV file delimiter
             String DELIMITER = ";";
 
-            // create a reader
-            BufferedReader br = null;
-            try {
-                br = Files.newBufferedReader(Paths.get(path_to_file));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            // read the file line by line
-            ArrayList<Kurs> tokens=new ArrayList<>();
-            String line;
-            while ((line = br.readLine()) != null) {
-                // convert line into tokens
-                tokens.add(new Kurs(line.split(DELIMITER)));
-                // print all tokens
-//                for (String token : tokens) {
-//                    System.out.println(token);
-//                }
-            }
-            br.close();
+            ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+            InputStream inputStream = classloader.getResourceAsStream(path_to_file);
+            InputStreamReader streamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
+            BufferedReader reader = new BufferedReader(streamReader);
 
-            return tokens;
+            ArrayList<Kurs> currency_list =new ArrayList<>();
+
+            reader.readLine();
+
+            for (String line; (line = reader.readLine()) != null;) {
+                currency_list.add(new Kurs(line.split(DELIMITER)));
+            }
+            reader.close();
+
+            return currency_list;
 
         } catch (IOException e) {
             throw new RuntimeException(e);
