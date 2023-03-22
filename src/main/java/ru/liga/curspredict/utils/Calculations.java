@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class Calculations {
+    private static BigDecimal zeroDivide = new BigDecimal(0);
 
     /**
      * avgSumOfrray производит расчет среднего арефметического для ArrayList
@@ -18,6 +19,9 @@ public class Calculations {
     public static BigDecimal avgSumArray(List<BigDecimal> array) {
         BigDecimal sum;
         BigDecimal divider = new BigDecimal(array.size());
+        if (divider.equals(zeroDivide)){
+         return null;
+        }
         sum = array.stream().reduce(BigDecimal.ZERO, BigDecimal::add);
         return sum.divide(divider, MathContext.DECIMAL128);
     }
@@ -52,6 +56,9 @@ public class Calculations {
 
         for (int i = 0; i < countDay; i++) {
             BigDecimal newCurs = Calculations.avgSumArray(lastCurses);
+            if (newCurs == null) {
+                return null;
+            }
             lastCurses.add(0, newCurs);
             lastCurses.remove(lastCurses.size() - 1);
         }

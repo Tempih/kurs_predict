@@ -78,11 +78,17 @@ public class StageControl {
                 case week -> {
                     countDay = 7;
                     predictResult = predict(currencyTable, countDay);
+                    if (predictResult == null){
+                        return false;
+                    }
                     resultList = formatter.startFormatResult(predictResult, lastDate, countDay);
                 }
                 case tomorrow -> {
                     countDay = 1;
                     predictResult = predict(currencyTable, countDay);
+                    if (predictResult == null){
+                        return false;
+                    }
                     resultList = formatter.startFormatResult(predictResult, lastDate, countDay);
                 }
             }
