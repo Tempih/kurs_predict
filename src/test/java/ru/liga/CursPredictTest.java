@@ -1,21 +1,16 @@
 package ru.liga;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import ru.liga.System.Main;
+import ru.liga.curspredict.Main;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.PrintStream;
 
-public class kursPredictTest {
-    private final PrintStream standardOut = System.out;
+public class CursPredictTest {
     private final ByteArrayOutputStream outputStreamCaptor = new ByteArrayOutputStream();
 
     @BeforeEach
