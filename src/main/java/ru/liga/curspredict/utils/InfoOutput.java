@@ -14,6 +14,7 @@ public class InfoOutput {
     private static final String firstWordError = "Первое слово не rate!";
     private static final String formatInputError = "Запрос введен некорректно! Формат запроса: rate {валюта} {глубина предсказания})";
     private static final String inputInfo = "Введите запрос для предсказания: ";
+    private static final String zeroDivider = "Произошло деление на 0";
 
     public static String giveDataError() {
         return lineBreaker.concat(dataError).concat(lineBreaker);
@@ -54,4 +55,7 @@ public class InfoOutput {
         return inputInfo;
     }
 
+    public static String giveZeroDivider(){
+        return lineBreaker.concat(zeroDivider).concat(lineBreaker);
+    }
 }

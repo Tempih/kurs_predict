@@ -87,6 +87,7 @@ public class StageControl {
                     countDay = 1;
                     predictResult = predict(currencyTable, countDay);
                     if (predictResult == null){
+                        WorkWithTerminal.textOutput(giveZeroDivider());
                         return false;
                     }
                     resultList = formatter.startFormatResult(predictResult, lastDate, countDay);
