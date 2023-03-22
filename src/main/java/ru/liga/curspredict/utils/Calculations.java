@@ -38,6 +38,9 @@ public class Calculations {
         for (int i = 0; i < countCurses; i++) {
             curs = currencyTable.get(i).getCurs();
             nominal = new BigDecimal(currencyTable.get(i).getNominal());
+            if (nominal.equals(zeroDivide)){
+                return null;
+            }
             divideResult = curs.divide(nominal, MathContext.DECIMAL128);
             curses.add(divideResult);
         }
@@ -53,7 +56,9 @@ public class Calculations {
      */
     public static List<BigDecimal> predict(List<CursTable> currencyTable, Integer countDay) {
         List<BigDecimal> lastCurses = lastCurses(currencyTable, 7);
-
+        if (lastCurses == null){
+            return null;
+        }
         for (int i = 0; i < countDay; i++) {
             BigDecimal newCurs = Calculations.avgSumArray(lastCurses);
             if (newCurs == null) {
