@@ -13,11 +13,11 @@ import java.util.List;
 
 public class Parser {
 
-    private final String delimiter = ";";
-    private final String space = " ";
-    private final String dot = ".";
-    private final String comma = ",";
-    private final String empty = "";
+    private static final String DELIMITER = ";";
+    private static final String SPACE = " ";
+    private static final String DOT = ".";
+    private static final String COMMA = ",";
+    private static final String EMPTY = "";
     /**
      * Класс getDataFromFile производит извлечение данных курса валюты из csv файла
      *
@@ -38,10 +38,10 @@ public class Parser {
                   reader.readLine();
 
                 for (String line; (line = reader.readLine()) != null;) {
-                    lineList = line.split(delimiter);
-                    nominal = Integer.parseInt(lineList[0].replace(space, empty));
+                    lineList = line.split(DELIMITER);
+                    nominal = Integer.parseInt(lineList[0].replace(SPACE, EMPTY));
                     date = lineList[1];
-                    curs = new BigDecimal(lineList[2].replace(comma, dot));
+                    curs = new BigDecimal(lineList[2].replace(COMMA, DOT));
                     cdx = lineList[3];
 
                     currencyList.add(new CursTable(nominal, date, curs, cdx));

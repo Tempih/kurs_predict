@@ -18,10 +18,10 @@ import static ru.liga.curspredict.utils.ResultOutput.giveResult;
 
 public class StageControl {
 
-    private final String messageDelimiter = " ";
-    private final String standardFirstWord = "rate";
-    private final Parser parser = new Parser();
-    private final Formatter formatter = new Formatter();
+    private static final String MESSAGE_DELIMITER = " ";
+    private static final String STANDARD_FIRST_WORD = "rate";
+    private static final Parser parser = new Parser();
+    private static final Formatter formatter = new Formatter();
 
 
     /**
@@ -43,7 +43,7 @@ public class StageControl {
                 default -> throw new Excepion.IncorrectCurrency();
             }
         } catch (RuntimeException e) {
-            WorkWithTerminal.textOutput(giveFileError(e.getMessage()));
+            WorkWithTerminal.textOutput(giveFileError());
             return currencyList;
         } catch (Excepion.IncorrectCurrency e) {
             WorkWithTerminal.textOutput(giveCurrencyError(Currency.values()));
@@ -73,9 +73,9 @@ public class StageControl {
         String lastDate = currencyTable.get(0).getDate();
 
         try {
-            Period period = Period.valueOf(inputPeriod);
+            Period period = Period.valueOf(inputPeriod.toUpperCase());
             switch (period) {
-                case week -> {
+                case WEEK -> {
                     countDay = 7;
                     predictResult = predict(currencyTable, countDay);
                     if (predictResult == null){
@@ -83,7 +83,7 @@ public class StageControl {
                     }
                     resultList = formatter.startFormatResult(predictResult, lastDate, countDay);
                 }
-                case tomorrow -> {
+                case TOMORROW -> {
                     countDay = 1;
                     predictResult = predict(currencyTable, countDay);
                     if (predictResult == null){
@@ -112,12 +112,12 @@ public class StageControl {
         while (true) {
             try {
                 String inputMessage = WorkWithTerminal.textInput();
-                String[] inputMessageSeparated = inputMessage.split(messageDelimiter);
+                String[] inputMessageSeparated = inputMessage.split(MESSAGE_DELIMITER);
                 if (inputMessageSeparated.length != 3) {
                     throw new Excepion.IncorrectInput();
                 }
                 String firstWord = inputMessageSeparated[0];
-                if (!standardFirstWord.equals(firstWord)) {
+                if (!STANDARD_FIRST_WORD.equals(firstWord)) {
                     throw new Excepion.IncorrectInput(giveFirstWordError());
                 }
 

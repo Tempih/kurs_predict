@@ -12,10 +12,10 @@ import java.util.List;
 import java.util.Locale;
 
 public class Formatter {
-    private final String dot = ".";
-    private final String comma = ",";
-    private final String zero = "0";
-    private final Locale ru = new Locale("ru");
+    private static final String DOT = ".";
+    private static final String COMMA = ",";
+    private static final String ZERO = "0";
+    private static final Locale RU = new Locale("ru");
 
     /**
      * addDayOfWeek производит получение дня недели из даты и возвращает [день недели дата](Вс 19.03.2023)
@@ -26,7 +26,7 @@ public class Formatter {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
         LocalDate currentDate = LocalDate.parse(date, formatter);
         DayOfWeek day = currentDate.getDayOfWeek();
-        String upperDay = WordUtils.capitalize(day.getDisplayName(TextStyle.SHORT, ru));
+        String upperDay = WordUtils.capitalize(day.getDisplayName(TextStyle.SHORT, RU));
 
         return upperDay.concat(" ").concat(date);
     }
@@ -50,16 +50,16 @@ public class Formatter {
      * @param curs - значение
      */
     public String checkLengthOfCurs(String curs) {
-        String[] separationCurs = curs.split(comma);
+        String[] separationCurs = curs.split(COMMA);
         String decimals = "";
         if (separationCurs.length == 2) {
-            decimals = curs.split(comma)[1];
+            decimals = curs.split(COMMA)[1];
         }
         if (decimals.length() == 1) {
-            return curs.concat(zero);
+            return curs.concat(ZERO);
         }
         if (decimals.length() == 0) {
-            return curs.concat(comma).concat(zero).concat(zero);
+            return curs.concat(COMMA).concat(ZERO).concat(ZERO);
         }
         return curs;
     }
@@ -73,7 +73,7 @@ public class Formatter {
      */
     public String convertDate(String outputDate, BigDecimal newCurs) {
         String date = addDayOfWeek(outputDate);
-        String curs = checkLengthOfCurs(roundCursWithSubsting(newCurs).replace(dot, comma));
+        String curs = checkLengthOfCurs(roundCursWithSubsting(newCurs).replace(DOT, COMMA));
         return date.concat(" - ").concat(curs);
     }
 

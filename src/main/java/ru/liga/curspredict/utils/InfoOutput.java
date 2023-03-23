@@ -4,58 +4,58 @@ import ru.liga.curspredict.structure.Enums.Currency;
 import ru.liga.curspredict.structure.Enums.Period;
 
 public class InfoOutput {
-    private static final String dataError = "Ошибка в данных!";
-    private static final String currencyError = "Данная валюта отсутсвует в базе!";
-    private static final String currencyInfo = "Доступные валюты:";
-    private static final String fileError = "Файл с данными отстсвует или пустой!";
-    private static final String lineBreaker = "\n";
-    private static final String periodError = "Введен неправильный срок предсказания!";
-    private static final String periodInfo = "Достпные сроки для предсказания:";
-    private static final String firstWordError = "Первое слово не rate!";
-    private static final String formatInputError = "Запрос введен некорректно! Формат запроса: rate {валюта} {глубина предсказания})";
-    private static final String inputInfo = "Введите запрос для предсказания: ";
-    private static final String zeroDivider = "Произошло деление на 0";
+    private static final String DATA_ERROR = "Ошибка в данных!";
+    private static final String CURRENCY_ERROR = "Данная валюта отсутсвует в базе!";
+    private static final String CURRENCY_INFO = "Доступные валюты:";
+    private static final String FILE_ERROR = "Файл с данными отстсвует или пустой!";
+    private static final String LINE_BREAKER = "\n";
+    private static final String PERIOD_ERROR = "Введен неправильный срок предсказания!";
+    private static final String PERIOD_INFO = "Достпные сроки для предсказания:";
+    private static final String FIRST_WORD_ERROR = "Первое слово не rate!";
+    private static final String FORMAT_INPUT_ERROR = "Запрос введен некорректно! Формат запроса: rate {валюта} {глубина предсказания})";
+    private static final String INPUT_INFO = "Введите запрос для предсказания: ";
+    private static final String ZERO_DIVIDER = "Произошло деление на 0";
 
     public static String giveDataError() {
-        return lineBreaker.concat(dataError).concat(lineBreaker);
+        return LINE_BREAKER.concat(DATA_ERROR).concat(LINE_BREAKER);
     }
 
-    public static String giveFileError(String message) {
-        return lineBreaker.concat(fileError).concat(lineBreaker).concat(message).concat(lineBreaker);
+    public static String giveFileError() {
+        return LINE_BREAKER.concat(FILE_ERROR).concat(LINE_BREAKER);
     }
 
     public static String giveCurrencyError(Currency[] currencyList) {
-        StringBuilder errorText = new StringBuilder(lineBreaker.concat(currencyError).concat(lineBreaker).concat(currencyInfo).concat(lineBreaker));
+        StringBuilder errorText = new StringBuilder(LINE_BREAKER.concat(CURRENCY_ERROR).concat(LINE_BREAKER).concat(CURRENCY_INFO).concat(LINE_BREAKER));
         for (Currency currency : currencyList) {
-            errorText.append(currency.toString().toUpperCase().concat(lineBreaker));
+            errorText.append(currency.toString().toUpperCase().concat(LINE_BREAKER));
         }
         return errorText.toString();
     }
 
     public static String givePeriodError(Period[] periodList) {
-        StringBuilder errorText = new StringBuilder(lineBreaker.concat(periodError).concat(lineBreaker).concat(periodInfo).concat(lineBreaker));
+        StringBuilder errorText = new StringBuilder(LINE_BREAKER.concat(PERIOD_ERROR).concat(LINE_BREAKER).concat(PERIOD_INFO).concat(LINE_BREAKER));
         for (Period period : periodList) {
-            errorText.append(period.toString().toLowerCase().concat(lineBreaker));
+            errorText.append(period.toString().toLowerCase().concat(LINE_BREAKER));
         }
         return errorText.toString();
     }
 
     public static String giveFirstWordError() {
-        return firstWordError.concat(lineBreaker);
+        return FIRST_WORD_ERROR.concat(LINE_BREAKER);
     }
 
     public static String giveFormatError(String message) {
         if (message==null){
-            return lineBreaker.concat(formatInputError).concat(lineBreaker);
+            return LINE_BREAKER.concat(FORMAT_INPUT_ERROR).concat(LINE_BREAKER);
         }
-        return lineBreaker.concat(message).concat(lineBreaker).concat(formatInputError).concat(lineBreaker);
+        return LINE_BREAKER.concat(message).concat(LINE_BREAKER).concat(FORMAT_INPUT_ERROR).concat(LINE_BREAKER);
     }
 
     public static String giveInputInfo() {
-        return inputInfo;
+        return INPUT_INFO;
     }
 
     public static String giveZeroDivider(){
-        return lineBreaker.concat(zeroDivider).concat(lineBreaker);
+        return LINE_BREAKER.concat(ZERO_DIVIDER).concat(LINE_BREAKER);
     }
 }

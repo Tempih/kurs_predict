@@ -4,8 +4,8 @@ import ru.liga.curspredict.exceptions.Excepion;
 
 public class Enums {
     public static enum Period {
-        week,
-        tomorrow;
+        WEEK,
+        TOMORROW;
     }
 
     public static enum Currency {

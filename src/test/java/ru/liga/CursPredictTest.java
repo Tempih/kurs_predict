@@ -3,7 +3,12 @@ package ru.liga;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.liga.curspredict.Main;
-import static org.assertj.core.api.Assertions.assertThat;
+import ru.liga.curspredict.system.StageControl;
+import ru.liga.curspredict.utils.Parser;
+
+import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -12,6 +17,8 @@ import java.io.PrintStream;
 
 public class CursPredictTest {
     private final ByteArrayOutputStream outputStreamCaptor = new ByteArrayOutputStream();
+    StageControl stageControl = new StageControl();
+    String input;
 
     @BeforeEach
     public void setUp() {
@@ -20,10 +27,10 @@ public class CursPredictTest {
 
     @Test
     public void checkUsdWeek() {
-        String input = "rate USD week";
+        input = "rate USD week";
         InputStream in = new ByteArrayInputStream(input.getBytes());
         System.setIn(in);
-        Main.main(null);
+        stageControl.startProgram();
         assertThat(outputStreamCaptor.toString())
                 .contains("Сб 18.03.2023 - 75,72")
                 .contains("Вс 19.03.2023 - 75,76")
@@ -36,7 +43,7 @@ public class CursPredictTest {
 
     @Test
     public void checkUsdTomorrow() {
-        String input = "rate USD tomorrow";
+        input = "rate USD tomorrow";
         InputStream in = new ByteArrayInputStream(input.getBytes());
         System.setIn(in);
         Main.main(null);
@@ -45,10 +52,10 @@ public class CursPredictTest {
 
     @Test
     public void checkEurWeek() {
-        String input = "rate EUR week";
+        input = "rate EUR week";
         InputStream in = new ByteArrayInputStream(input.getBytes());
         System.setIn(in);
-        Main.main(null);
+        stageControl.startProgram();
         assertThat(outputStreamCaptor.toString())
                 .contains("Сб 18.03.2023 - 80,60")
                 .contains("Вс 19.03.2023 - 80,61")
@@ -61,20 +68,20 @@ public class CursPredictTest {
 
     @Test
     public void checkEurTomorrow() {
-        String input = "rate EUR tomorrow";
+        input = "rate EUR tomorrow";
         InputStream in = new ByteArrayInputStream(input.getBytes());
         System.setIn(in);
-        Main.main(null);
+        stageControl.startProgram();
         assertThat(outputStreamCaptor.toString()).contains("Сб 18.03.2023 - 80,60");
     }
 
 
     @Test
     public void checkTryWeek() {
-        String input = "rate TRY week";
+        input = "rate TRY week";
         InputStream in = new ByteArrayInputStream(input.getBytes());
         System.setIn(in);
-        Main.main(null);
+        stageControl.startProgram();
         assertThat(outputStreamCaptor.toString())
                 .contains("Сб 18.03.2023 - 3,99")
                 .contains("Вс 19.03.2023 - 3,99")
@@ -87,11 +94,28 @@ public class CursPredictTest {
 
     @Test
     public void checkTryTomorrow() {
-        String input = "rate TRY tomorrow";
+        input = "rate TRY tomorrow";
         InputStream in = new ByteArrayInputStream(input.getBytes());
         System.setIn(in);
-        Main.main(null);
+        stageControl.startProgram();
         assertThat(outputStreamCaptor.toString()).contains("Сб 18.03.2023 - 3,99");
     }
 
+    @Test
+    public void  checkAtStartPeriodIncorrectCurrency(){
+        assertFalse(stageControl.startPredict("rt", "week"));
+    }
+
+    @Test
+    public void checkAtStartPeriodIncorrectPeriod(){
+        assertFalse(stageControl.startPredict("usd", "axc"));
+    }
+    @Test
+    public void checkAtStartPeriodCorrectCurrencyAndPeriod(){
+        assertTrue(stageControl.startPredict("usd", "week"));
+    }
+    @Test
+    public void checkIncorrectCurrency(){
+        assertThat(stageControl.selectCurrency("df").size() == 0);
+    }
 }
