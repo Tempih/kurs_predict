@@ -1,14 +1,14 @@
-package ru.liga.curspredict.structure;
+package ru.liga.coursepredict.structure;
 
 import java.math.BigDecimal;
 
-public class CursTable {// todo ошибка в названии
+public class CourseTable {
     private final Integer nominal;
     private final String date;
     private final BigDecimal curs;
     private final String cdx;
 
-    public CursTable(Integer nominal, String date, BigDecimal curs, String cdx) {
+    public CourseTable(Integer nominal, String date, BigDecimal curs, String cdx) {
         this.nominal = nominal;
         this.date = date;
         this.curs = curs;

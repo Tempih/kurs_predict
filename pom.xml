@@ -22,7 +22,7 @@
                     <finalName>curspredict</finalName>
                     <archive>
                         <manifest>
-                            <mainClass>ru.liga.curspredict.Main</mainClass>
+                            <mainClass>ru.liga.coursepredict.Main</mainClass>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>libs/</classpathPrefix>
                         </manifest>

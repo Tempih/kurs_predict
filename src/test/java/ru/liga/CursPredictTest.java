@@ -2,9 +2,8 @@ package ru.liga;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import ru.liga.curspredict.Main;
-import ru.liga.curspredict.system.StageControl;
-import ru.liga.curspredict.utils.Parser;
+import ru.liga.coursepredict.Main;
+import ru.liga.coursepredict.system.StageControl;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -116,6 +115,6 @@ public class CursPredictTest {
     }
     @Test
     public void checkIncorrectCurrency(){
-        assertThat(stageControl.selectCurrency("df").size() == 0);
+        assertThat(stageControl.selectCurrency("df")).isEmpty();
     }
 }

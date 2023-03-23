@@ -1,7 +1,7 @@
-package ru.liga.curspredict.utils;
+package ru.liga.coursepredict.utils;
 
-import ru.liga.curspredict.structure.Enums.Currency;
-import ru.liga.curspredict.structure.Enums.Period;
+import ru.liga.coursepredict.structure.Currency;
+import ru.liga.coursepredict.structure.Period;
 
 public class InfoOutput {
     private static final String DATA_ERROR = "Ошибка в данных!";
@@ -44,18 +44,15 @@ public class InfoOutput {
         return FIRST_WORD_ERROR.concat(LINE_BREAKER);
     }
 
-    public static String giveFormatError(String message) {
-        if (message==null){
-            return LINE_BREAKER.concat(FORMAT_INPUT_ERROR).concat(LINE_BREAKER);
-        }
-        return LINE_BREAKER.concat(message).concat(LINE_BREAKER).concat(FORMAT_INPUT_ERROR).concat(LINE_BREAKER);
+    public static String giveFormatError() {
+        return LINE_BREAKER.concat(FORMAT_INPUT_ERROR).concat(LINE_BREAKER);
     }
 
     public static String giveInputInfo() {
         return INPUT_INFO;
     }
 
-    public static String giveZeroDivider(){
+    public static String giveZeroDivider() {
         return LINE_BREAKER.concat(ZERO_DIVIDER).concat(LINE_BREAKER);
     }
 }

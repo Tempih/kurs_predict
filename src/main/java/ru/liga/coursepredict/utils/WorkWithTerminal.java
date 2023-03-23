@@ -1,8 +1,8 @@
-package ru.liga.curspredict.utils;
+package ru.liga.coursepredict.utils;
 
 import java.util.Scanner;
 
-import static ru.liga.curspredict.utils.InfoOutput.giveInputInfo;
+import static ru.liga.coursepredict.utils.InfoOutput.giveInputInfo;
 
 public class WorkWithTerminal {
 
@@ -11,14 +11,14 @@ public class WorkWithTerminal {
      *
      * @param message - сообщение для вывода в консоль
      */
-    public static void textOutput(String message) {// todo почему static?
+    public void textOutput(String message) {
         System.out.println(message);
     }
 
     /**
      * Класс textInput производит считывание сообщения из консоли
      */
-    public static String textInput() {// todo почему static?
+    public String textInput() {
         Scanner in = new Scanner(System.in);
         textOutput(giveInputInfo());
         return in.nextLine();

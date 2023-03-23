@@ -1,4 +1,4 @@
-package ru.liga.curspredict.utils;
+package ru.liga.coursepredict.utils;
 
 import java.util.List;
 
@@ -8,9 +8,9 @@ public class ResultOutput {
      *
      * @param resultList - спиок результатов для вывода
      */
-    public static void giveResult(List<String> resultList) {// todo почему static?
-        for (int i = 0; i < resultList.size(); i++) {
-            WorkWithTerminal.textOutput(resultList.get(i));
+    public void giveResult(List<String> resultList, WorkWithTerminal workWithTerminal) {
+        for (String s : resultList) {
+            workWithTerminal.textOutput(s);
         }
     }
 }

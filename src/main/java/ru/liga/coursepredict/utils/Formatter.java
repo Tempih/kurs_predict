@@ -1,6 +1,7 @@
-package ru.liga.curspredict.utils;
+package ru.liga.coursepredict.utils;
 
 import org.apache.commons.text.WordUtils;
+import ru.liga.coursepredict.constants.Constants;
 
 import java.math.BigDecimal;
 import java.time.DayOfWeek;
@@ -12,10 +13,24 @@ import java.util.List;
 import java.util.Locale;
 
 public class Formatter {
-    private static final String DOT = ".";
-    private static final String COMMA = ",";
     private static final String ZERO = "0";
     private static final Locale RU = new Locale("ru");
+    private static final Integer ONE_DAY = 1;
+    private static final Integer DAY_START_INDEX = 0;
+    private static final Integer MOUNT_AND_YEAR_START_INDEX = 2;
+    private static final Integer MOUNT_AND_YEAR_END_INDEX = 10;
+    private static final String DATE_FORMAT = "dd.MM.yyyy";
+    private static final Integer INTEGER_PART = 0;
+    private static final Integer DECIMAL_PART = 1;
+    private static final Integer START_OF_DECIMAL_PART = 0;
+    private static final Integer END_OF_DECIMAL_PART = 2;
+    private static final String REGEX_EXPRESSION = "\\";
+    private static final String EMPTY_STRING = "";
+    private static final Integer LENGTH_AFTER_SPLIT_WITH_INTEGER_AND_DECIMAL_PART = 2;
+    private static final Integer LENGTH_AFTER_SPLIT_WITHOUT_DECIMAL_PART = 1;
+    private static final Integer LENGTH_AFTER_SPLIT_WITHOUT_INTEGER_AND_DECIMAL_PART = 0;
+    private static final String DASH = "-";
+
 
     /**
      * addDayOfWeek производит получение дня недели из даты и возвращает [день недели дата](Вс 19.03.2023)
@@ -23,12 +38,12 @@ public class Formatter {
      * @param date - дата
      */
     public String addDayOfWeek(String date) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");//todo вынеси в константу
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
         LocalDate currentDate = LocalDate.parse(date, formatter);
         DayOfWeek day = currentDate.getDayOfWeek();
         String upperDay = WordUtils.capitalize(day.getDisplayName(TextStyle.SHORT, RU));
 
-        return upperDay.concat(" ").concat(date);//todo вынеси в константу пробел
+        return upperDay.concat(Constants.SPACE).concat(date);
     }
 
     /**
@@ -36,11 +51,11 @@ public class Formatter {
      *
      * @param curs - значение для округления
      */
-    public String roundCursWithSubsting(BigDecimal curs) {//todo ошибка в названии метода
-        String[] cursList = curs.toString().split("\\.");
-        String integerPart = cursList[0];//todo магическое число
-        String decimalPart = cursList[1].substring(0, 2);//todo магическое число
-        return integerPart.concat(".").concat(decimalPart);//todo вынеси в константу точку
+    public String roundCursWithSubstring(BigDecimal curs) {
+        String[] cursList = curs.toString().split(REGEX_EXPRESSION.concat(Constants.DOT));
+        String integerPart = cursList[INTEGER_PART];
+        String decimalPart = cursList[DECIMAL_PART].substring(START_OF_DECIMAL_PART, END_OF_DECIMAL_PART);
+        return integerPart.concat(Constants.DOT).concat(decimalPart);
     }
 
 
@@ -50,16 +65,16 @@ public class Formatter {
      * @param curs - значение
      */
     public String checkLengthOfCurs(String curs) {
-        String[] separationCurs = curs.split(COMMA);
-        String decimals = "";
-        if (separationCurs.length == 2) {//todo магическое число
-            decimals = curs.split(COMMA)[1];//todo магическое число
+        String[] separationCurs = curs.split(Constants.COMMA);
+        String decimals = EMPTY_STRING;
+        if (separationCurs.length == LENGTH_AFTER_SPLIT_WITH_INTEGER_AND_DECIMAL_PART) {
+            decimals = curs.split(Constants.COMMA)[DECIMAL_PART];
         }
-        if (decimals.length() == 1) {//todo магическое число
+        if (decimals.length() == LENGTH_AFTER_SPLIT_WITHOUT_DECIMAL_PART) {
             return curs.concat(ZERO);
         }
-        if (decimals.length() == 0) {//todo магическое число
-            return curs.concat(COMMA).concat(ZERO).concat(ZERO);
+        if (decimals.length() == LENGTH_AFTER_SPLIT_WITHOUT_INTEGER_AND_DECIMAL_PART) {
+            return curs.concat(Constants.COMMA).concat(ZERO).concat(ZERO);
         }
         return curs;
     }
@@ -73,8 +88,8 @@ public class Formatter {
      */
     public String convertDate(String outputDate, BigDecimal newCurs) {
         String date = addDayOfWeek(outputDate);
-        String curs = checkLengthOfCurs(roundCursWithSubsting(newCurs).replace(DOT, COMMA));
-        return date.concat(" - ").concat(curs);//todo вынеси в константу пробел
+        String curs = checkLengthOfCurs(roundCursWithSubstring(newCurs).replace(Constants.DOT, Constants.COMMA));
+        return date.concat(Constants.SPACE).concat(DASH).concat(Constants.SPACE).concat(curs);
     }
 
     /**
@@ -87,8 +102,8 @@ public class Formatter {
         List<String> outputDates = new ArrayList<>();
         String mountYear, day;
         for (int i = 0; i < countDate; i++) {
-            mountYear = lastDate.substring(2, 10);//todo магическое число
-            day = Integer.toString(Integer.parseInt(lastDate.substring(0, 2)) + 1);//todo магическое число
+            mountYear = lastDate.substring(MOUNT_AND_YEAR_START_INDEX, MOUNT_AND_YEAR_END_INDEX);
+            day = Integer.toString(Integer.parseInt(lastDate.substring(DAY_START_INDEX, MOUNT_AND_YEAR_START_INDEX)) + ONE_DAY);
             lastDate = day.concat(mountYear);
             outputDates.add(lastDate);
         }
@@ -104,7 +119,7 @@ public class Formatter {
      */
     public List<String> startFormatResult(List<BigDecimal> newCurses, String lastDate, Integer countDay) {
         List<String> outputDates = formatOutputDate(lastDate, countDay);
-        List<String> resultList = new ArrayList();//todo добавь <> "new ArrayList<>();"
+        List<String> resultList = new ArrayList<>();
         for (int i = 0; i < countDay; i++) {
             resultList.add(convertDate(outputDates.get(i), newCurses.get(i)));
         }

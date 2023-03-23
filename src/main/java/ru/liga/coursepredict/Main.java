@@ -1,9 +1,7 @@
-package ru.liga.curspredict;
+package ru.liga.coursepredict;
 
 
-import ru.liga.curspredict.system.StageControl;
-
-import java.math.BigDecimal;
+import ru.liga.coursepredict.system.StageControl;
 
 public class Main {
     public static void main(String[] args) {
