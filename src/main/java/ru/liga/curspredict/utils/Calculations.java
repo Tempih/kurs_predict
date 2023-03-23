@@ -16,7 +16,7 @@ public class Calculations {
      *
      * @param array - дата
      */
-    public static BigDecimal avgSumArray(List<BigDecimal> array) {
+    public static BigDecimal avgSumArray(List<BigDecimal> array) {//todo почему static?
         BigDecimal sum;
         BigDecimal divider = new BigDecimal(array.size());
         if (divider.equals(ZERO_DIVIDE)){
@@ -32,7 +32,7 @@ public class Calculations {
      *
      * @param currencyTable - ArrayList значений
      */
-    public static List<BigDecimal> lastCurses(List<CursTable> currencyTable, Integer countCurses) {
+    public static List<BigDecimal> lastCurses(List<CursTable> currencyTable, Integer countCurses) {//todo почему static?
         List<BigDecimal> curses = new ArrayList<>();
         BigDecimal curs, nominal, divideResult;
         for (int i = 0; i < countCurses; i++) {
@@ -54,7 +54,7 @@ public class Calculations {
      *
      * @param currencyTable - ArrayList значений курса валют
      */
-    public static List<BigDecimal> predict(List<CursTable> currencyTable, Integer countDay) {
+    public static List<BigDecimal> predict(List<CursTable> currencyTable, Integer countDay) {//todo почему static?
         List<BigDecimal> lastCurses = lastCurses(currencyTable, 7);
         if (lastCurses == null){
             return null;

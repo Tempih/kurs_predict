@@ -2,7 +2,7 @@ package ru.liga.curspredict.structure;
 
 import java.math.BigDecimal;
 
-public class CursTable {
+public class CursTable {// todo ошибка в названии
     private final Integer nominal;
     private final String date;
     private final BigDecimal curs;

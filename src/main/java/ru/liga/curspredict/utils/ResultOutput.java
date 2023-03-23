@@ -8,7 +8,7 @@ public class ResultOutput {
      *
      * @param resultList - спиок результатов для вывода
      */
-    public static void giveResult(List<String> resultList) {
+    public static void giveResult(List<String> resultList) {// todo почему static?
         for (int i = 0; i < resultList.size(); i++) {
             WorkWithTerminal.textOutput(resultList.get(i));
         }

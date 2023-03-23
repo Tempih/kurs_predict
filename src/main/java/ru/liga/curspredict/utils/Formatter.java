@@ -23,12 +23,12 @@ public class Formatter {
      * @param date - дата
      */
     public String addDayOfWeek(String date) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");//todo вынеси в константу
         LocalDate currentDate = LocalDate.parse(date, formatter);
         DayOfWeek day = currentDate.getDayOfWeek();
         String upperDay = WordUtils.capitalize(day.getDisplayName(TextStyle.SHORT, RU));
 
-        return upperDay.concat(" ").concat(date);
+        return upperDay.concat(" ").concat(date);//todo вынеси в константу пробел
     }
 
     /**
@@ -36,11 +36,11 @@ public class Formatter {
      *
      * @param curs - значение для округления
      */
-    public String roundCursWithSubsting(BigDecimal curs) {
+    public String roundCursWithSubsting(BigDecimal curs) {//todo ошибка в названии метода
         String[] cursList = curs.toString().split("\\.");
-        String integerPart = cursList[0];
-        String decimalPart = cursList[1].substring(0, 2);
-        return integerPart.concat(".").concat(decimalPart);
+        String integerPart = cursList[0];//todo магическое число
+        String decimalPart = cursList[1].substring(0, 2);//todo магическое число
+        return integerPart.concat(".").concat(decimalPart);//todo вынеси в константу точку
     }
 
 
@@ -52,13 +52,13 @@ public class Formatter {
     public String checkLengthOfCurs(String curs) {
         String[] separationCurs = curs.split(COMMA);
         String decimals = "";
-        if (separationCurs.length == 2) {
-            decimals = curs.split(COMMA)[1];
+        if (separationCurs.length == 2) {//todo магическое число
+            decimals = curs.split(COMMA)[1];//todo магическое число
         }
-        if (decimals.length() == 1) {
+        if (decimals.length() == 1) {//todo магическое число
             return curs.concat(ZERO);
         }
-        if (decimals.length() == 0) {
+        if (decimals.length() == 0) {//todo магическое число
             return curs.concat(COMMA).concat(ZERO).concat(ZERO);
         }
         return curs;
@@ -74,7 +74,7 @@ public class Formatter {
     public String convertDate(String outputDate, BigDecimal newCurs) {
         String date = addDayOfWeek(outputDate);
         String curs = checkLengthOfCurs(roundCursWithSubsting(newCurs).replace(DOT, COMMA));
-        return date.concat(" - ").concat(curs);
+        return date.concat(" - ").concat(curs);//todo вынеси в константу пробел
     }
 
     /**
@@ -87,8 +87,8 @@ public class Formatter {
         List<String> outputDates = new ArrayList<>();
         String mountYear, day;
         for (int i = 0; i < countDate; i++) {
-            mountYear = lastDate.substring(2, 10);
-            day = Integer.toString(Integer.parseInt(lastDate.substring(0, 2)) + 1);
+            mountYear = lastDate.substring(2, 10);//todo магическое число
+            day = Integer.toString(Integer.parseInt(lastDate.substring(0, 2)) + 1);//todo магическое число
             lastDate = day.concat(mountYear);
             outputDates.add(lastDate);
         }
@@ -104,7 +104,7 @@ public class Formatter {
      */
     public List<String> startFormatResult(List<BigDecimal> newCurses, String lastDate, Integer countDay) {
         List<String> outputDates = formatOutputDate(lastDate, countDay);
-        List<String> resultList = new ArrayList();
+        List<String> resultList = new ArrayList();//todo добавь <> "new ArrayList<>();"
         for (int i = 0; i < countDay; i++) {
             resultList.add(convertDate(outputDates.get(i), newCurses.get(i)));
         }

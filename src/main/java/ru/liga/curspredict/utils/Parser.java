@@ -13,7 +13,7 @@ import java.util.List;
 
 public class Parser {
 
-    private static final String DELIMITER = ";";
+    private static final String DELIMITER = ";";//todo сделай для этих констант отдельный класс чтобы было меньше дублирования
     private static final String SPACE = " ";
     private static final String DOT = ".";
     private static final String COMMA = ",";
@@ -32,16 +32,16 @@ public class Parser {
 
             InputStream is = getClass().getClassLoader().getResourceAsStream(filePath);
 
-            try (InputStreamReader streamReader = new InputStreamReader(is, StandardCharsets.UTF_8);
+            try (InputStreamReader streamReader = new InputStreamReader(is, StandardCharsets.UTF_8);//todo возможен NullPointerException
                  BufferedReader reader = new BufferedReader(streamReader))
             {
                   reader.readLine();
 
                 for (String line; (line = reader.readLine()) != null;) {
                     lineList = line.split(DELIMITER);
-                    nominal = Integer.parseInt(lineList[0].replace(SPACE, EMPTY));
-                    date = lineList[1];
-                    curs = new BigDecimal(lineList[2].replace(COMMA, DOT));
+                    nominal = Integer.parseInt(lineList[0].replace(SPACE, EMPTY));//todo магическое число
+                    date = lineList[1];//todo магическое число
+                    curs = new BigDecimal(lineList[2].replace(COMMA, DOT));//todo магическое число
                     cdx = lineList[3];
 
                     currencyList.add(new CursTable(nominal, date, curs, cdx));

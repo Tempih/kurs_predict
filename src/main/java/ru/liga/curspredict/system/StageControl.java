@@ -33,13 +33,13 @@ public class StageControl {
         List<CursTable> currencyList = new ArrayList<>();
 
         try {
-            Currency.lookup(currency.toUpperCase());
+            Currency.lookup(currency.toUpperCase());//todo смысл вызова метода?
             Currency currencies = Currency.valueOf(currency.toUpperCase());
 
             switch (currencies) {
-                case USD -> currencyList = parser.getDataFromFile("usd.csv");
-                case EUR -> currencyList = parser.getDataFromFile("eur.csv");
-                case TRY -> currencyList = parser.getDataFromFile("try.csv");
+                case USD -> currencyList = parser.getDataFromFile("usd.csv");//todo вынеси в константу
+                case EUR -> currencyList = parser.getDataFromFile("eur.csv");//todo вынеси в константу
+                case TRY -> currencyList = parser.getDataFromFile("try.csv");//todo вынеси в константу
                 default -> throw new Excepion.IncorrectCurrency();
             }
         } catch (RuntimeException e) {
@@ -66,19 +66,19 @@ public class StageControl {
 
         List<CursTable> currencyTable = new ArrayList<>(selectCurrency(currency));
 
-        if (currencyTable.size() == 0) {
+        if (currencyTable.size() == 0) {//todo isEmpty
             return false;
         }
 
-        String lastDate = currencyTable.get(0).getDate();
+        String lastDate = currencyTable.get(0).getDate();//todo магическое число
 
         try {
             Period period = Period.valueOf(inputPeriod.toUpperCase());
             switch (period) {
                 case WEEK -> {
-                    countDay = 7;
+                    countDay = 7;//todo магическое число
                     predictResult = predict(currencyTable, countDay);
-                    if (predictResult == null){
+                    if (predictResult == null){//todo делай реформат кода
                         return false;
                     }
                     resultList = formatter.startFormatResult(predictResult, lastDate, countDay);
@@ -97,7 +97,7 @@ public class StageControl {
             WorkWithTerminal.textOutput(givePeriodError(Period.values()));
             return false;
         }
-        if (resultList.size() != 0) {
+        if (resultList.size() != 0) {//todo isEmpty
             giveResult(resultList);
         } else {
             return false;
@@ -110,19 +110,19 @@ public class StageControl {
      */
     public void startProgram() {
         while (true) {
-            try {
+            try {// todo while включи в блок try
                 String inputMessage = WorkWithTerminal.textInput();
                 String[] inputMessageSeparated = inputMessage.split(MESSAGE_DELIMITER);
-                if (inputMessageSeparated.length != 3) {
+                if (inputMessageSeparated.length != 3) {//todo магическое число
                     throw new Excepion.IncorrectInput();
                 }
-                String firstWord = inputMessageSeparated[0];
+                String firstWord = inputMessageSeparated[0];//todo магическое число
                 if (!STANDARD_FIRST_WORD.equals(firstWord)) {
                     throw new Excepion.IncorrectInput(giveFirstWordError());
                 }
 
-                String currency = inputMessageSeparated[1];
-                String period = inputMessageSeparated[2];
+                String currency = inputMessageSeparated[1];//todo магическое число
+                String period = inputMessageSeparated[2];//todo магическое число
 
 
                 Boolean exitStatus = startPredict(currency, period);
