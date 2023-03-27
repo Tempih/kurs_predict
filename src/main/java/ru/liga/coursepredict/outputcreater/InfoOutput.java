@@ -1,4 +1,4 @@
-package ru.liga.coursepredict.utils;
+package ru.liga.coursepredict.outputcreater;
 
 import ru.liga.coursepredict.structure.Currency;
 import ru.liga.coursepredict.structure.Period;

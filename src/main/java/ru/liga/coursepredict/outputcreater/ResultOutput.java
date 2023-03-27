@@ -1,4 +1,6 @@
-package ru.liga.coursepredict.utils;
+package ru.liga.coursepredict.outputcreater;
+
+import ru.liga.coursepredict.printer.WorkWithTerminal;
 
 import java.util.List;
 

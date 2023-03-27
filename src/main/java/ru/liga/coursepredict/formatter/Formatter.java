@@ -1,4 +1,4 @@
-package ru.liga.coursepredict.utils;
+package ru.liga.coursepredict.formatter;
 
 import org.apache.commons.text.WordUtils;
 import ru.liga.coursepredict.constants.Constants;

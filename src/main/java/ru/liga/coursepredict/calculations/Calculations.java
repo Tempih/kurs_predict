@@ -1,4 +1,4 @@
-package ru.liga.coursepredict.utils;
+package ru.liga.coursepredict.calculations;
 
 import ru.liga.coursepredict.structure.CourseTable;
 

@@ -1,18 +1,22 @@
 package ru.liga.coursepredict.system;
 
+import ru.liga.coursepredict.calculations.Calculations;
 import ru.liga.coursepredict.constants.Constants;
 import ru.liga.coursepredict.exceptions.IncorrectCurrency;
 import ru.liga.coursepredict.exceptions.IncorrectInput;
+import ru.liga.coursepredict.formatter.Formatter;
+import ru.liga.coursepredict.parser.Parser;
+import ru.liga.coursepredict.printer.WorkWithTerminal;
 import ru.liga.coursepredict.structure.CourseTable;
 import ru.liga.coursepredict.structure.Currency;
 import ru.liga.coursepredict.structure.Period;
-import ru.liga.coursepredict.utils.*;
+import ru.liga.coursepredict.outputcreater.*;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-import static ru.liga.coursepredict.utils.InfoOutput.*;
+import static ru.liga.coursepredict.outputcreater.InfoOutput.*;
 
 public class StageControl {
     private static final String STANDARD_FIRST_WORD = "rate";

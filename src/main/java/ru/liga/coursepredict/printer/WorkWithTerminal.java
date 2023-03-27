@@ -1,8 +1,8 @@
-package ru.liga.coursepredict.utils;
+package ru.liga.coursepredict.printer;
 
 import java.util.Scanner;
 
-import static ru.liga.coursepredict.utils.InfoOutput.giveInputInfo;
+import static ru.liga.coursepredict.outputcreater.InfoOutput.giveInputInfo;
 
 public class WorkWithTerminal {
 
