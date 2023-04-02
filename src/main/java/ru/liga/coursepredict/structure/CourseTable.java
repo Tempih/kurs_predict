@@ -31,4 +31,8 @@ public class CourseTable {
         return cdx;
     }
 
+    @Override
+    public String toString() {
+        return nominal+";"+date+";"+curs+";"+cdx;
+    }
 }

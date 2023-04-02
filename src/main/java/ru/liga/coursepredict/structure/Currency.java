@@ -5,6 +5,8 @@ import ru.liga.coursepredict.exceptions.IncorrectCurrency;
 public enum Currency {
     TRY,
     USD,
+    LEV,
+    DRAM,
     EUR;
 
     public static Currency lookup(String id) throws IncorrectCurrency {

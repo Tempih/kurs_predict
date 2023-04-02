@@ -1,5 +1,6 @@
 package ru.liga.coursepredict.parser;
 
+import lombok.extern.slf4j.Slf4j;
 import ru.liga.coursepredict.constants.Constants;
 import ru.liga.coursepredict.structure.CourseTable;
 
@@ -13,13 +14,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static ru.liga.coursepredict.constants.Constants.ZERO;
+@Slf4j
 public class Parser {
     private static final String DELIMITER = ";";
     private static final String EMPTY = "";
+    public static final Integer ONE = 1;
     private static final Integer NOMINAL_INDEX = 0;
     private static final Integer DATE_INDEX = 1;
     private static final Integer CURS_INDEX = 2;
     private static final Integer CDX_INDEX = 3;
+    private static final Integer YEAR_INDEX = 6;
+
 
     /**
      * Класс getDataFromFile производит извлечение данных курса валюты из csv файла
@@ -32,13 +38,13 @@ public class Parser {
         String cdx, date;
         BigDecimal curs;
         String[] lineList;
-
+        log.debug("Начинаем парсить файл ".concat(filePath));
         InputStream is = getClass().getClassLoader().getResourceAsStream(filePath);
 
         try (InputStreamReader streamReader = new InputStreamReader(Objects.requireNonNull(is), StandardCharsets.UTF_8);
              BufferedReader reader = new BufferedReader(streamReader)) {
+            log.debug("Читаем содержимое файла");
             reader.readLine();
-
             for (String line; (line = reader.readLine()) != null; ) {
                 lineList = line.split(DELIMITER);
                 nominal = Integer.parseInt(lineList[NOMINAL_INDEX].replace(Constants.SPACE, EMPTY));
@@ -48,9 +54,20 @@ public class Parser {
 
                 currencyList.add(new CourseTable(nominal, date, curs, cdx));
             }
+            log.debug("Прочитали содержимое файла ".concat(filePath));
         } catch (IOException | NullPointerException e) {
+            log.debug("Ошибка в читаемом файле ".concat(filePath));
             e.printStackTrace();
         }
+        log.debug("Закончили парсить файл ".concat(filePath));
         return currencyList;
+    }
+
+    public Integer getMinYear(List<CourseTable> courseTable) {
+        return Integer.parseInt(courseTable.get(courseTable.size() - ONE).getDate().substring(YEAR_INDEX));
+    }
+
+    public Integer getMaxYear(List<CourseTable> courseTable) {
+        return Integer.parseInt(courseTable.get(Integer.parseInt(ZERO)).getDate().substring(YEAR_INDEX));
     }
 }

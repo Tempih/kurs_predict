@@ -1,0 +1,25 @@
+<configuration>
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>app.log</file>
+        <maxFileSize>1GB</maxFileSize>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>app-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <maxFileSize>1GB</maxFileSize>
+            <maxHistory>7</maxHistory>
+            <totalSizeCap>7GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+                <pattern>%d{HH:mm:ss.SSS}%thread%level%logger%line - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <root name="ru.liga" level="INFO">
+        <appender-ref ref="FILE"/>
+    </root>
+<!--    <root level="DEBUG">-->
+<!--        <appender-ref ref="STDOUT"/>-->
+<!--    </root>-->
+    <root name="ru.liga" level="DEBUG">
+        <appender-ref ref="FILE"/>
+    </root>
+</configuration>

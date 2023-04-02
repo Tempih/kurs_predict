@@ -2,23 +2,29 @@ package ru.liga.coursepredict.formatter;
 
 import org.apache.commons.text.WordUtils;
 import ru.liga.coursepredict.constants.Constants;
+import ru.liga.coursepredict.structure.PredictResult;
 
 import java.math.BigDecimal;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Collectors;
+
+import static ru.liga.coursepredict.constants.Constants.DASH;
+import static ru.liga.coursepredict.constants.Constants.ZERO;
 
 public class Formatter {
-    private static final String ZERO = "0";
     private static final Locale RU = new Locale("ru");
     private static final Integer ONE_DAY = 1;
-    private static final Integer DAY_START_INDEX = 0;
-    private static final Integer MOUNT_AND_YEAR_START_INDEX = 2;
-    private static final Integer MOUNT_AND_YEAR_END_INDEX = 10;
+    private static final Integer ONE_MONTH = 1;
+    private static final Integer ONE_YEAR = 1;
+    private static final Integer DIVIDER_FOR_UNIX = 1000;
     private static final String DATE_FORMAT = "dd.MM.yyyy";
     private static final Integer INTEGER_PART = 0;
     private static final Integer DECIMAL_PART = 1;
@@ -29,7 +35,11 @@ public class Formatter {
     private static final Integer LENGTH_AFTER_SPLIT_WITH_INTEGER_AND_DECIMAL_PART = 2;
     private static final Integer LENGTH_AFTER_SPLIT_WITHOUT_DECIMAL_PART = 1;
     private static final Integer LENGTH_AFTER_SPLIT_WITHOUT_INTEGER_AND_DECIMAL_PART = 0;
-    private static final String DASH = "-";
+    private static final Integer START_INDEX_DAY = 0;
+    private static final Integer START_INDEX_YEAR = 6;
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+
+    private static final ZoneId ZONE_ID = ZoneId.systemDefault();
 
 
     /**
@@ -100,11 +110,8 @@ public class Formatter {
      */
     public List<String> formatOutputDate(String lastDate, Integer countDate) {
         List<String> outputDates = new ArrayList<>();
-        String mountYear, day;
         for (int i = 0; i < countDate; i++) {
-            mountYear = lastDate.substring(MOUNT_AND_YEAR_START_INDEX, MOUNT_AND_YEAR_END_INDEX);
-            day = Integer.toString(Integer.parseInt(lastDate.substring(DAY_START_INDEX, MOUNT_AND_YEAR_START_INDEX)) + ONE_DAY);
-            lastDate = day.concat(mountYear);
+            lastDate = LocalDate.parse(lastDate, FORMATTER).plusDays(ONE_DAY).format(FORMATTER);
             outputDates.add(lastDate);
         }
         return outputDates;
@@ -113,16 +120,40 @@ public class Formatter {
     /**
      * startFormatResult - создает строку в формате [дата] - [курс валюты] и добавляент его в список для вывода
      *
-     * @param newCurses - предсказанные курсы валюты
-     * @param lastDate  - последняя дата расчета валюты в файле
-     * @param countDay  - кол-во днея для предсказания
+     * @param predictResult  - кол-во днея для предсказания
      */
-    public List<String> startFormatResult(List<BigDecimal> newCurses, String lastDate, Integer countDay) {
-        List<String> outputDates = formatOutputDate(lastDate, countDay);
+    public List<String> startFormatResult(PredictResult predictResult) {
         List<String> resultList = new ArrayList<>();
-        for (int i = 0; i < countDay; i++) {
-            resultList.add(convertDate(outputDates.get(i), newCurses.get(i)));
+        for (int i = 0; i < predictResult.getPredictedCurrency().size(); i++) {
+            resultList.add(convertDate(predictResult.getDates().get(i), predictResult.getPredictedCurrency().get(i)));
         }
         return resultList;
+    }
+
+    public List<String> subYearFromDate(List<String> dateList) {
+        return dateList.stream()
+                .map(date -> LocalDate.parse(date, FORMATTER).minusYears(ONE_YEAR).format(FORMATTER))
+                .collect(Collectors.toList());
+    }
+    public List<String> randomYearForDate(List<String> dateList, Integer minYear, Integer maxYear) {
+        return dateList.stream()
+                .map(date -> LocalDate.parse(date.substring(START_INDEX_DAY, START_INDEX_YEAR).concat(Integer.toString(randomYear(minYear, maxYear))), FORMATTER).format(FORMATTER))
+                .collect(Collectors.toList());
+    }
+    public Integer randomYear(Integer minYear, Integer maxYear){
+        return ThreadLocalRandom.current().nextInt(minYear, maxYear+ONE_YEAR);
+    }
+    public List<String> subDaysFromDate(List<String> dateList, Integer subDays) {
+        return dateList.stream()
+                .map(date -> LocalDate.parse(date, FORMATTER).minusDays(subDays).format(FORMATTER))
+                .collect(Collectors.toList());
+    }
+
+    public BigDecimal convertDateToUnixTime(String date){
+       return new BigDecimal(LocalDate.parse(date, FORMATTER).atStartOfDay(ZONE_ID).toEpochSecond()/DIVIDER_FOR_UNIX);
+    }
+
+    public BigDecimal convertDateToUnixTimeMinusMonth(String date){
+        return new BigDecimal(LocalDate.parse(date, FORMATTER).minusMonths(ONE_MONTH).atStartOfDay(ZONE_ID).toEpochSecond()/DIVIDER_FOR_UNIX);
     }
 }
