@@ -35,7 +35,12 @@ public class Bot extends TelegramLongPollingBot {
             } else if (messageText.equals(COMMAND_START)) {
                 sendText(chat_id, ANSWER);
             } else if(messageText.contains(RATE)) {
-                stageControl.startProgram(messageText, chat_id);
+                if(messageText.contains(GRAPH)) {
+                    sendPhoto(Long.toString(chat_id), stageControl.startProgram(messageText, chat_id));
+                }
+                else {
+                    sendText(chat_id, stageControl.startProgram(messageText, chat_id));
+                }
             }else {
                 sendText(chat_id, ANSWER);
             }
