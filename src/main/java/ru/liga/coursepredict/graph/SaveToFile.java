@@ -13,7 +13,9 @@ public class SaveToFile {
 
     public static String saveToFile(XYChart chart)
             throws IOException {
+        log.debug("Сохраняем в файл");
         BitmapEncoder.saveBitmap(chart, PATH_TO_FILE, BitmapEncoder.BitmapFormat.PNG);
+        log.debug("Сохранили в файл:".concat(PATH_TO_FILE));
         return PATH_TO_FILE;
 
     }

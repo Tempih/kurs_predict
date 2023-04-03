@@ -26,7 +26,7 @@ public class CreateGraph {
     private static final String Y_LABEL = "Курс";
 
     public XYChart createGraph(List<PredictResult> predictResultList) {
-
+        log.debug("Начинаем рисовать график");
         XYChart chart = new XYChartBuilder().width(WIDTH).height(HEIGHT)
                 .title(TITLE)
                 .xAxisTitle(X_LABEL)
@@ -38,8 +38,10 @@ public class CreateGraph {
         chart.getStyler().setYAxisDecimalPattern(Y_AXES_PATTERN);
         chart.getStyler().setDatePattern(DATE_FORMAT);
 
+        log.debug("Формируем списки переменных для графика");
         DateFormat formatter = new SimpleDateFormat(DATE_FORMAT);
         for (PredictResult result : predictResultList) {
+            log.debug("Формируем список для ".concat(result.getCurrency()));
             List<Date> dates = new ArrayList<>();
             List<Double> course = new ArrayList<>();
             for (int i = 0; i < result.getPredictedCurrency().size(); i++) {
@@ -51,7 +53,10 @@ public class CreateGraph {
                 course.add(Double.parseDouble(result.getPredictedCurrency().get(i).toString().toUpperCase()));
             }
             chart.addSeries(result.getCurrency(), dates, course);
+            log.debug("Закончили формировать список для ".concat(result.getCurrency()));
         }
+        log.debug("Закончили рисовать график");
+
         return chart;
     }
 }
