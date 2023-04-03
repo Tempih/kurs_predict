@@ -230,7 +230,7 @@ public class StageControl {
         return predictResultList;
     }
 
-    public String startOutputResult(List<PredictResult> predictResult, String paramOutput) {
+    public String startOutputResult(List<PredictResult> predictResult, String paramOutput){
 
         String outputString = EMPTY_STRING;
         Output output = Output.valueOf(paramOutput.toUpperCase());
@@ -239,7 +239,7 @@ public class StageControl {
             case GRAPH -> {
                 try {
                     log.debug("Начался процесс формирования графика");
-                    outputString = saveToFile(createGraph.createChart(predictResult));
+                    outputString = saveToFile(createGraph.createGraph(predictResult));
                 } catch (IOException e) {
                     log.debug("Ошибка в работе программы");
                     throw new RuntimeException(e);

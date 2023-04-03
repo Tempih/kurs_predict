@@ -1,93 +1,57 @@
 package ru.liga.coursepredict.graph;
 
 import lombok.extern.slf4j.Slf4j;
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.axis.*;
-import org.jfree.chart.labels.StandardXYToolTipGenerator;
-import org.jfree.chart.plot.XYPlot;
-import org.jfree.chart.renderer.xy.XYItemRenderer;
-import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
-import org.jfree.chart.renderer.xy.XYSplineRenderer;
-import org.jfree.chart.renderer.xy.XYStepRenderer;
-import org.jfree.chart.ui.RectangleInsets;
-import org.jfree.data.time.Day;
-import org.jfree.data.time.TimeSeries;
-import org.jfree.data.time.TimeSeriesCollection;
-import org.jfree.data.xy.XYDataset;
-import org.jfree.data.xy.XYSeries;
-import org.jfree.data.xy.XYSeriesCollection;
+import org.knowm.xchart.XYChart;
+import org.knowm.xchart.XYChartBuilder;
+import org.knowm.xchart.XYSeries;
+import org.knowm.xchart.style.Styler;
 import ru.liga.coursepredict.structure.PredictResult;
 
-import java.awt.*;
-import java.text.NumberFormat;
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import static java.lang.Math.min;
 
 
 @Slf4j
 public class CreateGraph {
     private static final String DATE_FORMAT = "dd.MM.yyyy";
-    private static final String DOT = "\\.";
-    private static final Integer DAYS_INDEX = 0;
-    private static final Integer MONTH_INDEX = 1;
-    private static final Integer YEAR_INDEX = 2;
+    public static final Integer WIDTH = 1920;
+    public static final Integer HEIGHT = 1080;
     private static final String TITLE = "Зависимость валют";
+    private static final String Y_AXES_PATTERN = "Р #.##";
     private static final String X_LABEL = "Дата";
     private static final String Y_LABEL = "Курс";
-    private static final double RECTANGLE_INSETS = 1.0;
-    /*
-     * void add(RegularTimePeriod period, double value)
-     */
-    private XYDataset createDataset(List<PredictResult> predictResult) {
-        log.debug("Начинаем готовить данные для построения графика");
-        TimeSeriesCollection dataset = new TimeSeriesCollection();
-        for (PredictResult result : predictResult) {
-            TimeSeries s1 = new TimeSeries(result.getCurrency());
+
+    public XYChart createGraph(List<PredictResult> predictResultList) {
+
+        XYChart chart = new XYChartBuilder().width(WIDTH).height(HEIGHT)
+                .title(TITLE)
+                .xAxisTitle(X_LABEL)
+                .yAxisTitle(Y_LABEL)
+                .build();
+
+        chart.getStyler().setLegendPosition(Styler.LegendPosition.InsideNW);
+        chart.getStyler().setDefaultSeriesRenderStyle(XYSeries.XYSeriesRenderStyle.Line);
+        chart.getStyler().setYAxisDecimalPattern(Y_AXES_PATTERN);
+        chart.getStyler().setDatePattern(DATE_FORMAT);
+
+        DateFormat formatter = new SimpleDateFormat(DATE_FORMAT);
+        for (PredictResult result : predictResultList) {
+            List<Date> dates = new ArrayList<>();
+            List<Double> course = new ArrayList<>();
             for (int i = 0; i < result.getPredictedCurrency().size(); i++) {
-                String[] splitDate = result.getDates().get(i).split(DOT);
-                s1.add(new Day(Integer.parseInt(splitDate[DAYS_INDEX]), Integer.parseInt(splitDate[MONTH_INDEX]), Integer.parseInt(splitDate[YEAR_INDEX])), Double.parseDouble(result.getPredictedCurrency().get(i).toString()));
+                try {
+                    dates.add(formatter.parse(result.getDates().get(i)));
+                } catch (ParseException e) {
+                    throw new RuntimeException(e);
+                }
+                course.add(Double.parseDouble(result.getPredictedCurrency().get(i).toString().toUpperCase()));
             }
-            dataset.addSeries(s1);
+            chart.addSeries(result.getCurrency(), dates, course);
         }
-        log.debug("Закончили готовить данные для построения графика");
-        return dataset;
-    }
-
-    public JFreeChart createChart(List<PredictResult> predictResult) {
-        XYDataset dataset = createDataset(predictResult);
-
-        log.debug("Начинаем строить график");
-        JFreeChart chart = ChartFactory.createTimeSeriesChart(
-                TITLE,
-                X_LABEL,
-                Y_LABEL,
-                dataset,
-                true,
-                true,
-                false
-        );
-
-        XYPlot plot = chart.getXYPlot();
-
-        plot.setAxisOffset(new RectangleInsets (RECTANGLE_INSETS, RECTANGLE_INSETS, RECTANGLE_INSETS, RECTANGLE_INSETS));
-
-        ValueAxis axis = plot.getDomainAxis();
-        axis.setAxisLineVisible(false);
-        axis = plot.getRangeAxis();
-        axis.setAxisLineVisible (false);
-        plot.setBackgroundPaint(Color.white);
-        plot.setDomainGridlinePaint(Color.lightGray);
-        plot.setRangeGridlinePaint (Color.lightGray);
-
-        DateAxis dateAxis = (DateAxis) plot.getDomainAxis();
-        dateAxis.setDateFormatOverride(new SimpleDateFormat(DATE_FORMAT));
-        dateAxis.setVerticalTickLabels(true);
-
-        log.debug("Закончили строить график");
         return chart;
     }
 }
