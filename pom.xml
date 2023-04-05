@@ -6,7 +6,7 @@
 
     <groupId>ru.liga</groupId>
     <artifactId>curspredict</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.1-SNAPSHOT</version>
 
     <properties>
         <org.projectlombok.version>1.18.16</org.projectlombok.version>
@@ -14,6 +14,15 @@
         <telegram.version>6.5.0</telegram.version>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
+        <org.junit.version>5.9.2</org.junit.version>
+        <junit.version>4.13.1</junit.version>
+        <org.assertj.version>3.24.2</org.assertj.version>
+        <org.apache.commons.version>1.4</org.apache.commons.version>
+        <ch.qos.logback.classic.version>1.4.5</ch.qos.logback.classic.version>
+        <ch.qos.logback.core.version>1.4.5</ch.qos.logback.core.version>
+        <org.slf4j.version>2.0.6</org.slf4j.version>
+        <org.knowm.xchart.version>3.8.3</org.knowm.xchart.version>
+        <org.mockito.version>4.2.0</org.mockito.version>
     </properties>
 
     <build>
@@ -59,29 +68,24 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
-            <version>5.9.2</version>
+            <version>${org.junit.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
-            <version>3.24.2</version>
+            <version>${org.assertj.version}</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.12</version>
+            <version>${junit.version}</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jfree</groupId>
-            <artifactId>jfreechart</artifactId>
-            <version>1.5.4</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-text</artifactId>
-            <version>1.4</version>
+            <version>${org.apache.commons.version}</version>
         </dependency>
         <dependency>
             <groupId>org.telegram</groupId>
@@ -102,28 +106,28 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.4.5</version>
+            <version>${ch.qos.logback.classic.version}</version>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-core</artifactId>
-            <version>1.4.5</version>
+            <version>${ch.qos.logback.core.version}</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>2.0.6</version>
+            <version>${org.slf4j.version}</version>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-junit-jupiter</artifactId>
-            <version>4.2.0</version>
+            <version>${org.mockito.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.knowm.xchart</groupId>
             <artifactId>xchart</artifactId>
-            <version>3.8.3</version>
+            <version>${org.knowm.xchart.version}</version>
         </dependency>
     </dependencies>
 

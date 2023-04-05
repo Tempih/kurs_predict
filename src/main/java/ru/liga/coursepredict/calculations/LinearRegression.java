@@ -31,16 +31,17 @@ public class LinearRegression {
         }
         int n = x.size();
 
-        // first pass
-        BigDecimal sumx,sumy;
+        BigDecimal sumx;
+        BigDecimal sumy;
         sumx = x.stream().reduce(BigDecimal.ZERO, BigDecimal::add);
         sumy  = y.stream().reduce(BigDecimal.ZERO, BigDecimal::add);
 
         BigDecimal xbar = sumx.divide(new BigDecimal(x.size()), MathContext.DECIMAL128);
         BigDecimal ybar = sumy.divide(new BigDecimal(x.size()), MathContext.DECIMAL128);
 
-        // second pass: compute summary statistics
-        BigDecimal xxbar = new BigDecimal(ZERO), yybar = new BigDecimal(ZERO), xybar = new BigDecimal(ZERO);
+        BigDecimal xxbar = new BigDecimal(ZERO);
+        BigDecimal yybar = new BigDecimal(ZERO);
+        BigDecimal xybar = new BigDecimal(ZERO);
         for (int i = 0; i < n; i++) {
             xxbar = xxbar.add(x.get(i).subtract(xbar)).multiply(x.get(i).subtract(xbar));
             yybar = yybar.add((y.get(i).subtract(ybar)).multiply(y.get(i).subtract(ybar)));
@@ -49,9 +50,8 @@ public class LinearRegression {
         slope  = xybar.divide(xxbar, MathContext.DECIMAL128);
         intercept = ybar.subtract(slope.multiply(xbar));
 
-        // more statistical analysis
-        BigDecimal rss = new BigDecimal(ZERO);      // residual sum of squares
-        BigDecimal ssr = new BigDecimal(ZERO);      // regression sum of squares
+        BigDecimal rss = new BigDecimal(ZERO);
+        BigDecimal ssr = new BigDecimal(ZERO);
         for (int i = 0; i < n; i++) {
             BigDecimal fit = slope.multiply(x.get(i)).add(intercept);
             rss = rss.add((fit.subtract(y.get(i))).multiply(fit.subtract(y.get(i))));
@@ -133,10 +133,8 @@ public class LinearRegression {
      *         <em>R</em><sup>2</sup>
      */
     public String toString() {
-        StringBuilder s = new StringBuilder();
-        s.append(String.format("%.2f n + %.2f", slope(), intercept()));
-        s.append("  (R^2 = " + String.format("%.3f", R2()) + ")");
-        return s.toString();
+        return String.format("%.2f n + %.2f", slope(), intercept()) +
+                "  (R^2 = " + String.format("%.3f", R2()) + ")";
     }
 
 }

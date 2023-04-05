@@ -6,19 +6,19 @@ import ru.liga.coursepredict.structure.CourseTable;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @Slf4j
 public class AvgSumPredict {
     private static final BigDecimal ZERO_DIVIDE = new BigDecimal(0);
-    private static final Integer COUNT_DAYS_FOR_PREDICT = 7;
+    private static final Integer COUNT_DAYS_FOR_AVG_CALCULATION = 7;
     private static final Integer INDEX_FOR_ADD_NEW_COURSE = 0;
 
     /**
-     * avgSumOfrray производит расчет среднего арефметического для ArrayList
+     * avgSumArray производит расчет среднего арифметического для входного списка
      *
      * @param array - дата
+     * @return среднее арифметическое
      */
     public BigDecimal avgSumArray(List<BigDecimal> array) {
         BigDecimal sum;
@@ -31,60 +31,37 @@ public class AvgSumPredict {
         return sum.divide(divider, MathContext.DECIMAL128);
     }
 
-
     /**
-     * lastSevenCurs производит получение последних 7 расчетов курса валют
-     *
-     * @param currencyTable - ArrayList значений
-     */
-    public List<BigDecimal> lastCurses(List<CourseTable> currencyTable, Integer countCurses) {
-        List<BigDecimal> curses = new ArrayList<>();
-        BigDecimal curs, nominal, divideResult;
-        for (int i = 0; i < countCurses; i++) {
-            curs = currencyTable.get(i).getCurs();
-            nominal = new BigDecimal(currencyTable.get(i).getNominal());
-            if (nominal.equals(ZERO_DIVIDE)) {
-                log.debug("Произошло деление на 0");
-                break;
-            }
-            divideResult = curs.divide(nominal, MathContext.DECIMAL128);
-            curses.add(divideResult);
-        }
-        return curses;
-    }
-
-
-    /**
-     * `
      * convertDate производит расчет курса валют на неделю
      *
      * @param currencyTable - ArrayList значений курса валют
+     * @return список предсказанных курсов валют
      */
     public List<BigDecimal> predict(List<CourseTable> currencyTable, Integer countDay) {
         log.debug("Начинаем расчет курса валют");
-        List<BigDecimal> lastCurses = lastCurses(currencyTable, COUNT_DAYS_FOR_PREDICT);
-        if (lastCurses.size() < COUNT_DAYS_FOR_PREDICT) {
-            log.debug("Ошибка в получении последних".concat(COUNT_DAYS_FOR_PREDICT.toString()).concat("дней"));
-            return lastCurses;
+        List<BigDecimal> lastCourses = new ArrayList<>(currencyTable.stream()
+                .limit(COUNT_DAYS_FOR_AVG_CALCULATION)
+                .map(values -> values.getCurs().divide(new BigDecimal(values.getNominal()), MathContext.DECIMAL128))
+                .toList());
+        List<BigDecimal> predictedCourses = new ArrayList<>();
+        if (lastCourses.size() < COUNT_DAYS_FOR_AVG_CALCULATION) {
+            log.debug("Ошибка в получении последних {} дней",COUNT_DAYS_FOR_AVG_CALCULATION);
+            return lastCourses;
         }
         for (int i = 0; i < countDay; i++) {
-            BigDecimal newCurs = avgSumArray(lastCurses);
+            BigDecimal newCurs = avgSumArray(lastCourses);
 
             if (newCurs == null) {
-                return lastCurses;
+                return lastCourses;
             }
-            lastCurses.add(INDEX_FOR_ADD_NEW_COURSE, newCurs);
-            if (i < COUNT_DAYS_FOR_PREDICT) {
-                lastCurses.remove(lastCurses.size() - 1);
-            }
+            lastCourses.add(INDEX_FOR_ADD_NEW_COURSE, newCurs);
+            lastCourses.remove(lastCourses.size() - 1);
+            predictedCourses.add(predictedCourses.size(), newCurs);
         }
-
-        while (lastCurses.size() != countDay) {
-            lastCurses.remove(lastCurses.size() - 1);
-        }
-        Collections.reverse(lastCurses);
         log.debug("Закончили расчет курса валют");
-        return lastCurses;
+        return predictedCourses;
     }
 
 }
+
+

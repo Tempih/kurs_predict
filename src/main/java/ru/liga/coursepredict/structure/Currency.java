@@ -1,6 +1,6 @@
 package ru.liga.coursepredict.structure;
 
-import ru.liga.coursepredict.exceptions.IncorrectCurrency;
+import ru.liga.coursepredict.exceptions.IncorrectCurrencyException;
 
 public enum Currency {
     TRY,
@@ -9,11 +9,11 @@ public enum Currency {
     DRAM,
     EUR;
 
-    public static Currency lookup(String id) throws IncorrectCurrency {
+    public static Currency lookup(String id) throws IncorrectCurrencyException {
         try {
             return Currency.valueOf(id);
         } catch (IllegalArgumentException e) {
-            throw new IncorrectCurrency();
+            throw new IncorrectCurrencyException();
         }
     }
 }

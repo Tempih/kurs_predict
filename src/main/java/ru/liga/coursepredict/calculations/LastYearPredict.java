@@ -16,39 +16,49 @@ public class LastYearPredict {
     private static final Integer ONE = 1;
 
     public List<BigDecimal> predict(List<CourseTable> currencyTable, List<String> subYearDateList, Formatter formatter) {
+        int countDays = subYearDateList.size();
         log.debug("Начинаем расчет курса валют");
         List<PredictMoonMist> dateFilteredCurrencyList = currencyTable.stream()
                 .filter(courseTable -> subYearDateList.contains(courseTable.getDate()))
                 .map(courseTable -> new PredictMoonMist(courseTable.getCurs(), courseTable.getDate()))
                 .collect(toList());
 
-        if (dateFilteredCurrencyList.size() != subYearDateList.size()) {
+        if (dateFilteredCurrencyList.size() != countDays) {
             log.debug("Не все даты были в прошлом, начинаем перебор прошлых дней");
-
-            List<String> notIncludedDates = subYearDateList.stream()
-                    .filter(key -> !dateFilteredCurrencyList.stream().map(PredictMoonMist::getDate).toList().contains(key))
-                    .toList();
-            log.debug("Количество отсутствующих дат".concat(Integer.toString(notIncludedDates.size())));
-
+            for(PredictMoonMist predictMoonMist: dateFilteredCurrencyList){
+                subYearDateList.remove(predictMoonMist.getDate());
+            }
+            log.debug("Количество отсутствующих дат {}", subYearDateList.size());
+            List<String> notIncludedDatesMinusDate = subYearDateList;
             int daysAgo = ONE;
+            log.debug("Входим в цикл while(true)");
             while (true) {
-                List<String> notIncludedDatesMinusDate = formatter.subDaysFromDate(notIncludedDates, daysAgo);
+                notIncludedDatesMinusDate = formatter.subDaysFromDate(notIncludedDatesMinusDate, daysAgo);
+                log.debug("Вычли один день из дат и получили {}", notIncludedDatesMinusDate);
 
-                currencyTable.stream()
-                        .filter(courseTable -> notIncludedDatesMinusDate.contains(courseTable.getDate()))
+                List<String> finalNotIncludedDatesMinusDate = notIncludedDatesMinusDate;
+                List<PredictMoonMist> newCursAndDatesForAdd = currencyTable.stream()
+                        .filter(courseTable -> finalNotIncludedDatesMinusDate.contains(courseTable.getDate()))
                         .map(courseTable -> new PredictMoonMist(courseTable.getCurs(), courseTable.getDate()))
-                        .forEachOrdered(dateFilteredCurrencyList::add);
-                if (dateFilteredCurrencyList.size() == subYearDateList.size()) {
+                        .toList();
+
+                log.debug("Получили таки новые даты и валюты:{}", newCursAndDatesForAdd);
+                dateFilteredCurrencyList.addAll(newCursAndDatesForAdd);
+                if (dateFilteredCurrencyList.size() == countDays) {
+                    log.debug("Вышли из цикла while(true)");
                     break;
                 }
-                notIncludedDates = notIncludedDatesMinusDate.stream()
-                        .filter(key -> !dateFilteredCurrencyList.stream().map(PredictMoonMist::getDate).toList().contains(key))
-                        .toList();
+                for (PredictMoonMist predictMoonMist:newCursAndDatesForAdd){
+                    notIncludedDatesMinusDate.remove(predictMoonMist.getDate());
+                }
+                log.debug("Новая итерация цикла while(true)");
+
             }
         }
-        dateFilteredCurrencyList.sort(Comparator.comparing(PredictMoonMist::getDate));
         log.debug("Закончили расчет курса валют");
 
-        return dateFilteredCurrencyList.stream().map(PredictMoonMist::getCourse).toList();
+        return dateFilteredCurrencyList.stream()
+                .sorted(Comparator.comparing(PredictMoonMist::getDate))
+                .map(PredictMoonMist::getCourse).toList();
     }
 }

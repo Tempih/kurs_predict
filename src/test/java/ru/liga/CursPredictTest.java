@@ -11,7 +11,6 @@ import ru.liga.coursepredict.system.StageControl;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -214,26 +213,20 @@ public class CursPredictTest {
     }
 
     @Test
-    public void checkRoundCursWithSubstring(){
-        assertThat(formatter.roundCursWithSubstring(new BigDecimal("12.4567890")))
-                .isEqualTo("12.45");
-    }
-
-    @Test
     public void checkCheckLengthOfCursWithTwoDecimals(){
-        assertThat(formatter.checkLengthOfCurs("12,45"))
+        assertThat(formatter.addCursDecimal("12,45"))
                 .isEqualTo("12,45");
     }
 
     @Test
     public void checkCheckLengthOfCursWithOneDecimals(){
-        assertThat(formatter.checkLengthOfCurs("12,4"))
+        assertThat(formatter.addCursDecimal("12,4"))
                 .isEqualTo("12,40");
     }
 
     @Test
     public void checkCheckLengthOfCursWithZeroDecimals(){
-        assertThat(formatter.checkLengthOfCurs("12"))
+        assertThat(formatter.addCursDecimal("12"))
                 .isEqualTo("12,00");
     }
 

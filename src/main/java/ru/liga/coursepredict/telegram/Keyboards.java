@@ -289,18 +289,15 @@ public class Keyboards {
                     .text(outputs.toString()).callbackData(outputs.toString().toLowerCase())
                     .build());
         }
-        System.out.println(21);
         InlineKeyboardButton back = new InlineKeyboardButton();
         back.setText(BACK_RU);
         back.setCallbackData(ALG);
         InlineKeyboardButton next = new InlineKeyboardButton();
         next.setText(CALCULATION_RU);
         next.setCallbackData(RESULT);
-        System.out.println(output);
         if (!output.isEmpty()) {
             next.setCallbackData(RESULT.concat(output));
         }
-        System.out.println(22);
 
         InlineKeyboardMarkup keyboardM3 = new InlineKeyboardMarkup();
         List<List<InlineKeyboardButton>> rowsInlineM2 = new ArrayList<>();

@@ -3,8 +3,8 @@ package ru.liga.coursepredict.structure;
 import java.math.BigDecimal;
 
 public class PredictMoonMist {
-    private BigDecimal course;
-    private String date;
+    private final BigDecimal course;
+    private final String date;
 
     public PredictMoonMist(BigDecimal course, String date) {
         this.course = course;
@@ -20,4 +20,11 @@ public class PredictMoonMist {
         return date;
     }
 
+    @Override
+    public String toString() {
+        return "PredictMoonMist{" +
+                "course=" + course +
+                ", date='" + date + '\'' +
+                '}';
+    }
 }

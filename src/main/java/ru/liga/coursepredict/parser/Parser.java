@@ -38,7 +38,7 @@ public class Parser {
         String cdx, date;
         BigDecimal curs;
         String[] lineList;
-        log.debug("Начинаем парсить файл ".concat(filePath));
+        log.debug("Начинаем парсить файл {}",filePath);
         InputStream is = getClass().getClassLoader().getResourceAsStream(filePath);
 
         try (InputStreamReader streamReader = new InputStreamReader(Objects.requireNonNull(is), StandardCharsets.UTF_8);
@@ -54,12 +54,12 @@ public class Parser {
 
                 currencyList.add(new CourseTable(nominal, date, curs, cdx));
             }
-            log.debug("Прочитали содержимое файла ".concat(filePath));
+            log.debug("Прочитали содержимое файла {}", filePath);
         } catch (IOException | NullPointerException e) {
-            log.debug("Ошибка в читаемом файле ".concat(filePath));
+            log.debug("Ошибка в читаемом файле {}", filePath);
             e.printStackTrace();
         }
-        log.debug("Закончили парсить файл ".concat(filePath));
+        log.debug("Закончили парсить файл {}", filePath);
         return currencyList;
     }
 

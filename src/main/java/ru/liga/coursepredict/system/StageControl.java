@@ -5,16 +5,16 @@ import ru.liga.coursepredict.calculations.AvgSumPredict;
 import ru.liga.coursepredict.calculations.LastYearPredict;
 import ru.liga.coursepredict.calculations.LinearRegression;
 import ru.liga.coursepredict.constants.Constants;
-import ru.liga.coursepredict.exceptions.IncorrectCurrency;
-import ru.liga.coursepredict.exceptions.IncorrectInput;
+import ru.liga.coursepredict.exceptions.IncorrectCurrencyException;
+import ru.liga.coursepredict.exceptions.IncorrectInputException;
 import ru.liga.coursepredict.formatter.Formatter;
 import ru.liga.coursepredict.graph.CreateGraph;
 import ru.liga.coursepredict.parser.Parser;
-import ru.liga.coursepredict.printer.WorkWithTerminal;
 import ru.liga.coursepredict.structure.*;
 import ru.liga.coursepredict.outputcreater.*;
 import ru.liga.coursepredict.telegram.Bot;
 
+import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -38,6 +38,7 @@ public class StageControl {
     private static final LastYearPredict lastYearPredict = new LastYearPredict();
     private static final ResultOutput resultOutput = new ResultOutput();
     private static final Bot bot = new Bot();
+    private static final String DIRECTORY = "course_data";
     private static final String USD_FILE = "usd.csv";
     private static final String LEV_FILE = "lev.csv";
     private static final String DRAM_FILE = "dram.csv";
@@ -69,24 +70,24 @@ public class StageControl {
             Currency currencies = Currency.lookup(currency.toUpperCase());
             log.debug("Введенная валюта есть в списке");
             switch (currencies) {
-                case USD -> currencyList = parser.getDataFromFile(USD_FILE);
-                case EUR -> currencyList = parser.getDataFromFile(EUR_FILE);
-                case TRY -> currencyList = parser.getDataFromFile(TRY_FILE);
-                case LEV -> currencyList = parser.getDataFromFile(LEV_FILE);
-                case DRAM -> currencyList = parser.getDataFromFile(DRAM_FILE);
-                default -> throw new IncorrectCurrency();
+                case USD -> currencyList = parser.getDataFromFile(DIRECTORY.concat(File.separator).concat(USD_FILE));
+                case EUR -> currencyList = parser.getDataFromFile(DIRECTORY.concat(File.separator).concat(EUR_FILE));
+                case TRY -> currencyList = parser.getDataFromFile(DIRECTORY.concat(File.separator).concat(TRY_FILE));
+                case LEV -> currencyList = parser.getDataFromFile(DIRECTORY.concat(File.separator).concat(LEV_FILE));
+                case DRAM -> currencyList = parser.getDataFromFile(DIRECTORY.concat(File.separator).concat(DRAM_FILE));
+                default -> throw new IncorrectCurrencyException();
             }
         } catch (RuntimeException e) {
             log.debug("Ошибка при считывании из файла");
             bot.sendText(chatId, giveFileError());
 
             return currencyList;
-        } catch (IncorrectCurrency e) {
+        } catch (IncorrectCurrencyException e) {
             log.debug("Введенная валюта отсутствует в списке");
             bot.sendText(chatId, giveCurrencyError(Currency.values()));
             return currencyList;
         }
-        log.info("Для валюты:".concat(currency).concat(", данные получены из файла"));
+        log.info("Для валюты:{}, данные получены из файла", currency);
         return currencyList;
 
     }
@@ -113,7 +114,7 @@ public class StageControl {
             bot.sendText(chatId, givePeriodError(Period.values()));
             return countDays;
         }
-        log.info("Для периода".concat(inputPeriod).concat(" получено").concat(countDays.toString()).concat("дней"));
+        log.info("Для периода {} получено {} дней", inputPeriod, countDays);
         return countDays;
     }
 
@@ -145,55 +146,55 @@ public class StageControl {
                 return predictResultList;
             }
             log.debug("Процесс выбора периода/даты закончился");
-            log.info("Получен ".concat(inputPredictPeriod).concat(" на ").concat(countDays.toString()).concat(" дней"));
+            log.info("Получен {} на {} дней", inputPredictPeriod, countDays);
             PredictAlgorithms predictAlgorithms = PredictAlgorithms.valueOf(predictAlgorithm.toUpperCase());
             switch (predictAlgorithms) {
                 case AVG -> {
-                    log.debug("Алгоритм предсказания ".concat(predictAlgorithm).concat(" начался"));
+                    log.debug("Алгоритм предсказания {} начался", predictAlgorithm);
                     predictResult = avgSumPredict.predict(item.getValue(), countDays);
                     if (predictResult.size() != countDays) {
                         log.debug("Количество дней не совпало с количеством полученных курс валюты");
-                        bot.sendText(chatId,giveZeroDivider());
+                        bot.sendText(chatId,giveCalculationError());
                         return new ArrayList<>();
                     }
                     predictResultList.add(new PredictResult(item.getKey(), predictResult, dateList));
-                    log.debug("Было добавлено ".concat(Integer.toString(predictResult.size())).concat(" строк курса валюты").concat(item.getKey()));
-                    log.debug("Алгоритм предсказания ".concat(predictAlgorithm).concat(" закончился"));
+                    log.debug("Было добавлено {} строк курса валюты {}", predictResult.size(), item.getKey());
+                    log.debug("Алгоритм предсказания {} закончился", predictAlgorithm);
                 }
                 case MOON -> {
-                    log.debug("Алгоритм предсказания ".concat(predictAlgorithm).concat(" начался"));
+                    log.debug("Алгоритм предсказания {} начался", predictAlgorithm);
                     List<String> dateListMinusOneYear = formatter.subYearFromDate(dateList);
                     log.debug("Год был вычтен из дат для предсказания");
                     predictResult = lastYearPredict.predict(item.getValue(), dateListMinusOneYear, formatter);
                     if (predictResult.size()!=countDays) {
                         log.debug("Количество дней не совпало с количеством полученных курс валюты");
-                        bot.sendText(chatId,giveZeroDivider()); //todo
+                        bot.sendText(chatId,giveCalculationError());
                         return new ArrayList<>();
                     }
                     predictResultList.add(new PredictResult(item.getKey(), predictResult, dateList));
-                    log.debug("Было добавлено ".concat(Integer.toString(predictResult.size())).concat(" строк курса валюты").concat(item.getKey()));
-                    log.debug("Алгоритм предсказания ".concat(predictAlgorithm).concat(" закончился"));
+                    log.debug("Было добавлено {} строк курса валюты {}", predictResult.size(), item.getKey());
+                    log.debug("Алгоритм предсказания {} закончился", predictAlgorithm);
                 }
                 case MIST -> {
-                    log.debug("Алгоритм предсказания ".concat(predictAlgorithm).concat(" начался"));
+                    log.debug("Алгоритм предсказания {} начался", predictAlgorithm);
                     Integer minYear = parser.getMinYear(item.getValue());
-                    log.debug("Минимальный год:".concat(minYear.toString()));
+                    log.debug("Минимальный год: {}", minYear);
                     Integer maxYear = parser.getMaxYear(item.getValue());
-                    log.debug("Максимальный год:".concat(maxYear.toString()));
+                    log.debug("Максимальный год: {}", maxYear.toString());
                     List<String> dateListWithRandomYear = formatter.randomYearForDate(dateList, minYear, maxYear);
                     log.debug("Год был рандомно выбран из доступных для предсказания");
                     predictResult = lastYearPredict.predict(item.getValue(), dateListWithRandomYear, formatter);
                     if (predictResult.size() != countDays) {
                         log.debug("Количество дней не совпало с количеством полученных курс валюты");
-                        bot.sendText(chatId,giveZeroDivider()); //todo
+                        bot.sendText(chatId,giveCalculationError());
                         return new ArrayList<>();
                     }
                     predictResultList.add(new PredictResult(item.getKey(), predictResult, dateList));
-                    log.debug("Было добавлено ".concat(Integer.toString(predictResult.size())).concat(" строк курса валюты").concat(item.getKey()));
-                    log.debug("Алгоритм предсказания ".concat(predictAlgorithm).concat(" закончился"));
+                    log.debug("Было добавлено {} строк курса валюты {}", predictResult.size(), item.getKey());
+                    log.debug("Алгоритм предсказания {} закончился", predictAlgorithm);
                 }
                 case REG -> {
-                    log.debug("Алгоритм предсказания ".concat(predictAlgorithm).concat(" начался"));
+                    log.debug("Алгоритм предсказания {} начался", predictAlgorithm);
                     predictResult = new ArrayList<>();
                     BigDecimal lastDateFromCurrencyTable = formatter.convertDateToUnixTimeMinusMonth(item.getValue().get(LAST_DATE_INDEX).getDate());
                     log.debug("Последняя дата для предсказания были переведены в unix время");
@@ -216,16 +217,15 @@ public class StageControl {
                     log.debug("Предсказание по полученному уравнению закончилось");
                     if (predictResult.size() != countDays) {
                         log.debug("Количество дней не совпало с количеством полученных курс валюты");
-                        bot.sendText(chatId,giveZeroDivider()); //todo
+                        bot.sendText(chatId,giveCalculationError());
                         return new ArrayList<>();
                     }
                     predictResultList.add(new PredictResult(item.getKey(), predictResult, dateList));
-                    log.debug("Было добавлено ".concat(Integer.toString(predictResult.size())).concat(" строк курса валюты ").concat(item.getKey()));
-                    log.debug("Алгоритм предсказания ".concat(predictAlgorithm).concat(" закончился"));
+                    log.debug("Было добавлено {} строк курса валюты {}", predictResult.size(), item.getKey());
+                    log.debug("Алгоритм предсказания {} закончился", predictAlgorithm);
                 }
             }
-            log.info("Алгоритм предсказания ".concat(predictAlgorithm).concat(" для валюты ").concat(item.getKey()).concat(" выполнен успешно"));
-            log.debug("Алгоритм предсказания ".concat(predictAlgorithm).concat(" для валюты ").concat(item.getKey()).concat(" выполнен успешно"));
+            log.info("Алгоритм предсказания {} для валюты {} выполнен успешно", predictAlgorithm, item.getKey());
         }
         return predictResultList;
     }
@@ -260,7 +260,7 @@ public class StageControl {
                 log.debug("Процесс формирования списка закончился");
             }
         }
-        log.info("Был выбран вывод в виде ".concat(paramOutput));
+        log.info("Был выбран вывод в виде {}", paramOutput);
         return outputString;
     }
 
@@ -272,33 +272,33 @@ public class StageControl {
         try {
             try {
                 if (!checkCorrectInput(inputMessage)){
-                    throw new IncorrectInput(giveFormatError());
+                    throw new IncorrectInputException(giveFormatError());
                 }
-                log.debug("Получено сообщение:".concat(inputMessage));
+                log.debug("Получено сообщение:{}",inputMessage);
                 String paramOutput = DEFAULT_OUTPUT_PARAM;
                 String[] inputMessageSeparated = inputMessage.split(Constants.SPACE);
                 String firstWord = inputMessageSeparated[INDEX_FIRST_INPUT_WORD];
                 if (!STANDARD_FIRST_WORD.equals(firstWord)) {
-                    log.info("Первое слово не ".concat(STANDARD_FIRST_WORD).concat(",a ").concat(firstWord));
-                    throw new IncorrectInput(giveFirstWordError());
+                    log.info("Первое слово не {},a {}", STANDARD_FIRST_WORD, firstWord);
+                    throw new IncorrectInputException(giveFirstWordError());
                 }
                 String[] currencies = inputMessageSeparated[INDEX_SECOND_INPUT_WORD].split(COMMA);
-                log.info("Получены следующие валюты ".concat(inputMessageSeparated[INDEX_SECOND_INPUT_WORD]));
+                log.info("Получены следующие валюты {}",inputMessageSeparated[INDEX_SECOND_INPUT_WORD]);
                 String inputPredictPeriod = inputMessageSeparated[INDEX_THIRD_INPUT_WORD].replace(DASH, EMPTY_STRING);
                 String inputParamPeriod = inputMessageSeparated[INDEX_FORTH_INPUT_WORD];
-                log.info("Выбран следующий период/дата предсказания:".concat(inputParamPeriod));
+                log.info("Выбран следующий период/дата предсказания: {}", inputParamPeriod);
                 String predictAlgorithm = inputMessageSeparated[INDEX_FIFTH_INPUT_WORD];
-                log.info("Выбран следующий алгоритм предсказания:".concat(predictAlgorithm));
+                log.info("Выбран следующий алгоритм предсказания:{}", predictAlgorithm);
                 if (inputMessageSeparated.length > INDEX_SIXTH_INPUT_WORD) {
                     paramOutput = inputMessageSeparated[INDEX_SEVENTH_INPUT_WORD];
                 }
-                log.info("Выбран следующий вариант вывода курса валют:".concat(paramOutput));
+                log.info("Выбран следующий вариант вывода курса валют:{}",paramOutput);
                 Map<String, List<CourseTable>> currencyTables = new HashMap<>();
                 log.debug("Началось формирование словаря с валютами и курсам");
                 for (String s : currencies) {
                     currencyTables.put(s, selectCurrency(s, chatId));
                 }
-                log.debug("Сформирован словарь с валютами и курсам валют. Его размер:".concat(Integer.toString(currencyTables.size())));
+                log.debug("Сформирован словарь с валютами и курсам валют. Его размер: {}", currencyTables.size());
                 if (currencyTables.isEmpty()) {
                     log.debug("Словарь оказался пустой");
                     bot.sendText(chatId, giveDataError());
@@ -313,7 +313,7 @@ public class StageControl {
                 log.debug("Начался процесс подготовки результата для вывода");
                 output = startOutputResult(predictResult, paramOutput);
                 log.debug("Процесс подготовки результата для вывода закончился");
-            } catch (IncorrectInput ex) {
+            } catch (IncorrectInputException ex) {
                 log.debug("Ошибка при формировании данных");
                 bot.sendText(chatId, giveFormatError());
 

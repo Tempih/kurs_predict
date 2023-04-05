@@ -1,16 +1,19 @@
 package ru.liga.coursepredict.formatter;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.text.WordUtils;
 import ru.liga.coursepredict.constants.Constants;
 import ru.liga.coursepredict.structure.PredictResult;
 
 import java.math.BigDecimal;
-import java.time.DayOfWeek;
+import java.math.RoundingMode;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.time.format.TextStyle;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ThreadLocalRandom;
@@ -18,19 +21,14 @@ import java.util.stream.Collectors;
 
 import static ru.liga.coursepredict.constants.Constants.DASH;
 import static ru.liga.coursepredict.constants.Constants.ZERO;
-
+@Slf4j
 public class Formatter {
-    private static final Locale RU = new Locale("ru");
     private static final Integer ONE_DAY = 1;
     private static final Integer ONE_MONTH = 1;
     private static final Integer ONE_YEAR = 1;
     private static final Integer DIVIDER_FOR_UNIX = 1000;
     private static final String DATE_FORMAT = "dd.MM.yyyy";
-    private static final Integer INTEGER_PART = 0;
     private static final Integer DECIMAL_PART = 1;
-    private static final Integer START_OF_DECIMAL_PART = 0;
-    private static final Integer END_OF_DECIMAL_PART = 2;
-    private static final String REGEX_EXPRESSION = "\\";
     private static final String EMPTY_STRING = "";
     private static final Integer LENGTH_AFTER_SPLIT_WITH_INTEGER_AND_DECIMAL_PART = 2;
     private static final Integer LENGTH_AFTER_SPLIT_WITHOUT_DECIMAL_PART = 1;
@@ -38,7 +36,7 @@ public class Formatter {
     private static final Integer START_INDEX_DAY = 0;
     private static final Integer START_INDEX_YEAR = 6;
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-
+    private static final String DATE_FORMAT_WITH_DAY = "EE dd.MM.yyyy";
     private static final ZoneId ZONE_ID = ZoneId.systemDefault();
 
 
@@ -46,35 +44,25 @@ public class Formatter {
      * addDayOfWeek производит получение дня недели из даты и возвращает [день недели дата](Вс 19.03.2023)
      *
      * @param date - дата
+     * @return дата в формате [день недели дата](Вс 19.03.2023)
      */
     public String addDayOfWeek(String date) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
-        LocalDate currentDate = LocalDate.parse(date, formatter);
-        DayOfWeek day = currentDate.getDayOfWeek();
-        String upperDay = WordUtils.capitalize(day.getDisplayName(TextStyle.SHORT, RU));
-
-        return upperDay.concat(Constants.SPACE).concat(date);
+        Date currentDate;
+        try {
+            currentDate = new SimpleDateFormat(DATE_FORMAT).parse(date);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+        return WordUtils.capitalize(new  SimpleDateFormat(DATE_FORMAT_WITH_DAY, Locale.getDefault()).format(currentDate));
     }
 
     /**
-     * roundCursWithSubsting производит обрезание размерности числа до 2 знаков
+     * addCursDecimal производит проверку длины дробной части значения и добавляет 0, если длина меньше 2
      *
-     * @param curs - значение для округления
+     * @param curs - курс валюты
+     * @return curs - курс валюты с 2 знаками после запятой
      */
-    public String roundCursWithSubstring(BigDecimal curs) {
-        String[] cursList = curs.toString().split(REGEX_EXPRESSION.concat(Constants.DOT));
-        String integerPart = cursList[INTEGER_PART];
-        String decimalPart = cursList[DECIMAL_PART].substring(START_OF_DECIMAL_PART, END_OF_DECIMAL_PART);
-        return integerPart.concat(Constants.DOT).concat(decimalPart);
-    }
-
-
-    /**
-     * checkLenghtOfCurs производит проверку длины дробной части значения и добавляет 0, если длина меньше 2
-     *
-     * @param curs - значение
-     */
-    public String checkLengthOfCurs(String curs) {
+    public String addCursDecimal(String curs) {
         String[] separationCurs = curs.split(Constants.COMMA);
         String decimals = EMPTY_STRING;
         if (separationCurs.length == LENGTH_AFTER_SPLIT_WITH_INTEGER_AND_DECIMAL_PART) {
@@ -91,14 +79,15 @@ public class Formatter {
 
 
     /**
-     * convertDate подготавливает данные для вывода в формате [дата - занчение курса валют](Пт 24.03.2023 - 40,01)
+     * convertDate подготавливает данные для вывода в формате [дата - значение курса валют](Пт 24.03.2023 - 40,01)
      *
      * @param outputDate - дата
      * @param newCurs    - значение курса валют
+     * @return  строка в формате [дата - значение курса валют](Пт 24.03.2023 - 40,01)
      */
     public String convertDate(String outputDate, BigDecimal newCurs) {
         String date = addDayOfWeek(outputDate);
-        String curs = checkLengthOfCurs(roundCursWithSubstring(newCurs).replace(Constants.DOT, Constants.COMMA));
+        String curs = newCurs.setScale(2, RoundingMode.DOWN).toString().replace(".", ",");
         return date.concat(Constants.SPACE).concat(DASH).concat(Constants.SPACE).concat(curs);
     }
 
@@ -106,7 +95,8 @@ public class Formatter {
      * formatOutputDate создает даты для предсказанных курсов валют
      *
      * @param lastDate  - последняя дата расчета валюты в файле
-     * @param countDate - кол-во днея для предсказания
+     * @param countDate - кол-во дней для предсказания
+     * @return outputDates - список дат для предсказания
      */
     public List<String> formatOutputDate(String lastDate, Integer countDate) {
         List<String> outputDates = new ArrayList<>();
@@ -121,12 +111,15 @@ public class Formatter {
      * startFormatResult - создает строку в формате [дата] - [курс валюты] и добавляент его в список для вывода
      *
      * @param predictResult  - кол-во днея для предсказания
+     * @return resultList - список строк в формате [дата] - [курс валюты]
      */
     public List<String> startFormatResult(PredictResult predictResult) {
         List<String> resultList = new ArrayList<>();
+        log.debug("Начинаем формировать выходной результат");
         for (int i = 0; i < predictResult.getPredictedCurrency().size(); i++) {
             resultList.add(convertDate(predictResult.getDates().get(i), predictResult.getPredictedCurrency().get(i)));
         }
+        log.debug("Закончили формировать выходной результат");
         return resultList;
     }
 

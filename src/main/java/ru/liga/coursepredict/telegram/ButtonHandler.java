@@ -3,7 +3,7 @@ package ru.liga.coursepredict.telegram;
 import lombok.extern.slf4j.Slf4j;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
-import ru.liga.coursepredict.Intefaces.DateValidator;
+import ru.liga.coursepredict.intefaces.DateValidator;
 import ru.liga.coursepredict.structure.Period;
 import ru.liga.coursepredict.structure.PredictAlgorithms;
 import ru.liga.coursepredict.system.StageControl;
@@ -49,8 +49,7 @@ public class ButtonHandler {
         date = EMPTY;
         alg = EMPTY;
         output = EMPTY;
-        String text = REDICT_RU;
-        return editMessageText(id, text, msgId, keyboards.initKbForStartPredict());
+        return editMessageText(id, REDICT_RU, msgId, keyboards.initKbForStartPredict());
     }
 
     public EditMessageText buttonTapRate(Long id, int msgId) {
@@ -59,16 +58,15 @@ public class ButtonHandler {
         date = EMPTY;
         alg = EMPTY;
         output = EMPTY;
-        String text = CURRENCY_ADD;
         log.debug("Все переменный сделаны пустыми");
-        return editMessageText(id, text, msgId, keyboards.createNewKeyBoard(cur, ADD));
+        return editMessageText(id, CURRENCY_ADD, msgId, keyboards.createNewKeyBoard(cur, ADD));
     }
 
     public EditMessageText buttonTapCurrency(Long id, String data, int msgId) {
-        log.debug("Добавляем валюту, получено значение:".concat(data));
+        log.debug("Добавляем валюту, получено значение:{}", data);
         kb = null;
         if (data.equals(CURRENCIES)) {
-            log.debug("Значение ".concat(data).concat(" равно ").concat(CURRENCIES));
+            log.debug("Значение {} равно {}", data, CURRENCIES);
             if (periodParam.isEmpty()) {
                 text = CURRENCY_ADD.concat(CURRENCY_SELECT).concat(cur.toString().toUpperCase());
             }
@@ -93,10 +91,10 @@ public class ButtonHandler {
             log.debug("Возвращаем ответ");
             return editMessageText(id, text, msgId, kb);
         }
-        if (!(data.equals(START_PREDICT) || data.equals(DEL)) && data.substring(data.length() - LENGTH_WORD_TO_DEL_FROM_CURRENCY).toLowerCase().equals(ADD)) {
+        if (!(data.equals(START_PREDICT) || data.equals(DEL)) && data.substring(data.length() - LENGTH_WORD_TO_DEL_FROM_CURRENCY).equalsIgnoreCase(ADD)) {
             if (data.length() > LENGTH_WORD_TO_DEL_FROM_CURRENCY) {
                 cur.add(data.substring(INDEX_OF_START, data.length() - LENGTH_WORD_TO_DEL_FROM_CURRENCY));
-                log.debug("Валюту ".concat(data).concat(" добавили"));
+                log.debug("Валюту {} добавили", data);
             }
             if (periodParam.isEmpty()) {
                 text = CURRENCY_ADD.concat(CURRENCY_SELECT).concat(cur.toString().toUpperCase());
@@ -118,10 +116,10 @@ public class ButtonHandler {
 
     public EditMessageText buttonTapCurrencyDelete(Long id, String data, int msgId) {
         kb = null;
-        log.debug("Удаляем валюту, получено значение:".concat(data));
+        log.debug("Удаляем валюту, получено значение:{}",data);
         if (!(data.equals(ADD))) {
             cur.remove(data.substring(INDEX_OF_START, data.length() - LENGTH_WORD_TO_DEL_FROM_CURRENCY));
-            log.debug("Валюту ".concat(data).concat(" удалили"));
+            log.debug("Валюту {} удалили", data);
             if (periodParam.isEmpty()) {
                 text = CURRENCY_ADD.concat(CURRENCY_SELECT).concat(cur.toString().toUpperCase());
             }
@@ -159,7 +157,7 @@ public class ButtonHandler {
     }
 
     public EditMessageText buttonTapDateOrPeriod(Long id, String data, int msgId) {
-        log.debug("Выбираем период или дата, получено значение:".concat(data));
+        log.debug("Выбираем период или дата, получено значение:{}", data);
         kb = null;
         if (cur.isEmpty()) {
             log.debug("Ни одна из валют не была выбрана");
@@ -193,7 +191,7 @@ public class ButtonHandler {
         }
         if (!(data.equals(PARAM_PERIOD))) {
             periodParam = data;
-            log.debug("Получили режим периода ".concat(data));
+            log.debug("Получили режим периода {}", data);
             text = SELECT_PERIOD_OR_DATE.concat(CURRENCY_SELECT).concat(cur.toString().toUpperCase()).concat(TYPE_OF_PERIOD_PREDICT).concat(periodParam);
             kb = keyboards.createNewKeyBoardForPeriodParam(periodParam);
         }
@@ -204,7 +202,7 @@ public class ButtonHandler {
 
     public EditMessageText buttonTapPeriod(Long id, String data, int msgId) {
         kb = null;
-        log.debug("Выбираем период, получено значение:".concat(data));
+        log.debug("Выбираем период, получено значение:{}", data);
         if (data.equals(PERIOD)) {
             log.debug("Формируем ответ по периоду");
             periodParam = data;
@@ -252,7 +250,7 @@ public class ButtonHandler {
 
     public EditMessageText buttonTapDate(Long id, String data, int msgId) {
         kb = null;
-        log.debug("Получаем дату, получено значение:".concat(data));
+        log.debug("Получаем дату, получено значение:{}", data);
         if (data.equals(DATE)) {
 
             periodParam = data;
@@ -323,7 +321,7 @@ public class ButtonHandler {
                     text = text.concat(OUTPUT_TYPE).concat(output);
                 }
             }
-            log.debug("Добавили число к дате:".concat(data));
+            log.debug("Добавили число к дате:{}", data);
             kb = keyboards.createNewKeyBoardDateInput();
         }
         log.debug("Возвращаем ответ");
@@ -331,7 +329,7 @@ public class ButtonHandler {
     }
 
     public EditMessageText buttonTapAlg(Long id, String data, int msgId) {
-        log.debug("Получаем алгоритм расчета, получено значение:".concat(data));
+        log.debug("Получаем алгоритм расчета, получено значение:{}", data);
         if (date.isEmpty()) {
             log.debug("Дата не заполнена");
             if (periodParam.equals(DATE)) {
@@ -355,10 +353,10 @@ public class ButtonHandler {
             return editMessageText(id, text, msgId, kb);
         }
         if (data.equals(ALG)) {
-            log.debug("Значение ".concat(data).concat("не равно ").concat(ALG));
+            log.debug("Значение {} не равно {}", data, ALG);
             if (periodParam.equals(DATE)) {
                 log.debug("До этого была дата");
-                if (!validator.isValid(date)) {
+                if (!validator.isValidDate(date)) {
                     log.debug("Введена не правильная дата");
                     date = EMPTY;
                     text = ERROR_DATE.concat(CURRENCY_SELECT).concat(cur.toString().toUpperCase()).concat(TYPE_OF_PERIOD_PREDICT).concat(periodParam).concat(DATE_OF_PREDICT).concat(date);
@@ -400,10 +398,10 @@ public class ButtonHandler {
             }
         }
         if (!data.equals(ALG)) {
-            log.debug("Значение ".concat(data).concat(" равно ").concat(ALG));
+            log.debug("Значение {} равно {}", data, ALG);
             if (periodParam.equals(DATE)) {
                 log.debug("До этого была дата");
-                if (!validator.isValid(date)) {
+                if (!validator.isValidDate(date)) {
                     log.debug("Введена не правильная дата");
                     date = EMPTY;
                     text = ERROR_DATE.concat(CURRENCY_SELECT).concat(cur.toString().toUpperCase()).concat(TYPE_OF_PERIOD_PREDICT).concat(periodParam).concat(DATE_OF_PREDICT).concat(date);
@@ -440,7 +438,7 @@ public class ButtonHandler {
     }
 
     public EditMessageText buttonTapOutput(Long id, String data, int msgId) {
-        log.debug("Получаем метод вывода результата, получено значение:".concat(data));
+        log.debug("Получаем метод вывода результата, получено значение:{}", data);
         if (alg.isEmpty()) {
             log.debug("Алгоритм не выбран");
             text = ALG_ERROR.concat(CURRENCY_SELECT).concat(cur.toString().toUpperCase()).concat(TYPE_OF_PERIOD_PREDICT).concat(periodParam);
@@ -449,7 +447,15 @@ public class ButtonHandler {
                 alg = data;
                 log.debug("Алгоритм выбран");
                 text = CURRENCY_SELECT.concat(cur.toString().toUpperCase()).concat(TYPE_OF_PERIOD_PREDICT).concat(periodParam);
-                kb = keyboards.createNewKeyBoardOutput(output);
+                log.debug("Проверяем что можно рисовать график");
+                if (cur.size() > ONE) {
+                    if (periodParam.equals(PERIOD)) {
+                        if (date.equals(WEEK) || date.equals(MONTH)) {
+                            log.debug("График рисовать можно");
+                            kb = keyboards.createNewKeyBoardOutput(output);
+                        }
+                    }
+                }
             }
             if (periodParam.equals(DATE)) {
                 text = text.concat(DATE_OF_PREDICT).concat(date);
@@ -464,7 +470,7 @@ public class ButtonHandler {
             return editMessageText(id, text, msgId, kb);
         }
         if (data.equals(OUTPUT)) {
-            log.debug("Значение ".concat(data).concat(" равно ").concat(OUTPUT));
+            log.debug("Значение {} равно {}", data, OUTPUT);
             text = TYPE_OF_OUTPUT.concat(CURRENCY_SELECT).concat(cur.toString().toUpperCase()).concat(TYPE_OF_PERIOD_PREDICT).concat(periodParam);
             if (periodParam.equals(DATE)) {
                 text = text.concat(DATE_OF_PREDICT).concat(date);
@@ -487,6 +493,7 @@ public class ButtonHandler {
                 }
             }
 
+
         }
         if (Arrays.stream(PredictAlgorithms.values()).map(Enum::toString).toList().toString().toLowerCase().contains(data.toLowerCase())) {
             log.debug("Проверяем алгоритм");
@@ -502,13 +509,19 @@ public class ButtonHandler {
             if (!output.isEmpty()) {
                 text = text.concat(OUTPUT_TYPE).concat(output);
             }
-            kb = keyboards.createNewKeyBoardOutput(output);
+            kb = keyboards.createNewKeyBoardAlg(date, periodParam, cur, alg);
+            if (cur.size() > 1) {
+                if (periodParam.equals(PERIOD)) {
+                    if (date.equals(WEEK) || date.equals(MONTH)) {
+                        kb = keyboards.createNewKeyBoardOutput(output);
+                    }
+                }
+            }
             log.debug("Возвращаем ответ");
             return editMessageText(id, text, msgId, kb);
         }
-        if (!(data.equals(OUTPUT))) {
-            System.out.println(23);
-            log.debug("Значение ".concat(data).concat(" не равно ").concat(OUTPUT));
+        if (!(data.equals(OUTPUT) || Arrays.stream(PredictAlgorithms.values()).map(Enum::toString).toList().toString().toLowerCase().contains(data.toLowerCase()))) {
+            log.debug("Значение {} не равно {}", data, OUTPUT);
             output = data;
             text = TYPE_OF_OUTPUT.concat(CURRENCY_SELECT).concat(cur.toString().toUpperCase()).concat(TYPE_OF_PERIOD_PREDICT).concat(periodParam);
             if (periodParam.equals(DATE)) {
@@ -537,7 +550,7 @@ public class ButtonHandler {
         if (!output.isEmpty()) {
             input = input.concat(SPACE).concat(DASH).concat(OUTPUT).concat(SPACE).concat(output);
         }
-        log.debug("Запрос сформирован:".concat(input));
+        log.debug("Запрос сформирован:{}", input);
 
         StageControl stageControl = new StageControl();
         log.debug("Начинаем расчет");

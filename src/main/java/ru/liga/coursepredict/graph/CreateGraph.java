@@ -41,7 +41,7 @@ public class CreateGraph {
         log.debug("Формируем списки переменных для графика");
         DateFormat formatter = new SimpleDateFormat(DATE_FORMAT);
         for (PredictResult result : predictResultList) {
-            log.debug("Формируем список для ".concat(result.getCurrency()));
+            log.debug("Формируем список для {}", result.getCurrency());
             List<Date> dates = new ArrayList<>();
             List<Double> course = new ArrayList<>();
             for (int i = 0; i < result.getPredictedCurrency().size(); i++) {
@@ -50,10 +50,10 @@ public class CreateGraph {
                 } catch (ParseException e) {
                     throw new RuntimeException(e);
                 }
-                course.add(Double.parseDouble(result.getPredictedCurrency().get(i).toString().toUpperCase()));
+                course.add(Double.parseDouble(result.getPredictedCurrency().get(i).toString()));
             }
-            chart.addSeries(result.getCurrency(), dates, course);
-            log.debug("Закончили формировать список для ".concat(result.getCurrency()));
+            chart.addSeries(result.getCurrency().toUpperCase(), dates, course);
+            log.debug("Закончили формировать список для {}", result.getCurrency());
         }
         log.debug("Закончили рисовать график");
 
