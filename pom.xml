@@ -9,20 +9,22 @@
     <version>1.0.1-SNAPSHOT</version>
 
     <properties>
-        <org.projectlombok.version>1.18.16</org.projectlombok.version>
+        <version.lombok>1.18.16</version.lombok>
         <apache.poi.version>4.1.2</apache.poi.version>
-        <telegram.version>6.5.0</telegram.version>
+        <version.telegrambots>6.5.0</version.telegrambots>
+        <version.telegrambotsextensions>6.5.0</version.telegrambotsextensions>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
-        <org.junit.version>5.9.2</org.junit.version>
-        <junit.version>4.13.1</junit.version>
-        <org.assertj.version>3.24.2</org.assertj.version>
-        <org.apache.commons.version>1.4</org.apache.commons.version>
-        <ch.qos.logback.classic.version>1.4.5</ch.qos.logback.classic.version>
-        <ch.qos.logback.core.version>1.4.5</ch.qos.logback.core.version>
-        <org.slf4j.version>2.0.6</org.slf4j.version>
-        <org.knowm.xchart.version>3.8.3</org.knowm.xchart.version>
-        <org.mockito.version>4.2.0</org.mockito.version>
+        <version.junit.jupiter>5.9.2</version.junit.jupiter>
+        <version.junit>4.13.1</version.junit>
+        <version.assertj.core>3.24.2</version.assertj.core>
+        <version.commons.text>1.4</version.commons.text>
+        <version.logback.classic>1.4.5</version.logback.classic>
+        <version.logback.core>1.4.5</version.logback.core>
+        <version.slf4j>2.0.6</version.slf4j>
+        <version.xchart>3.8.3</version.xchart>
+        <version.mockito.junit.jupiter>4.2.0</version.mockito.junit.jupiter>
+        <version.dependency.plugin>3.0.2</version.dependency.plugin>
     </properties>
 
     <build>
@@ -44,7 +46,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
-                <version>3.0.2</version>
+                <version>${version.dependency.plugin}</version>
                 <executions>
                     <execution>
                         <id>copy-dependencies</id>
@@ -68,66 +70,66 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
-            <version>${org.junit.version}</version>
+            <version>${version.junit.jupiter}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
-            <version>${org.assertj.version}</version>
+            <version>${version.assertj.core}</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>${junit.version}</version>
+            <version>${version.junit}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-text</artifactId>
-            <version>${org.apache.commons.version}</version>
+            <version>${version.commons.text}</version>
         </dependency>
         <dependency>
             <groupId>org.telegram</groupId>
             <artifactId>telegrambots</artifactId>
-            <version>${telegram.version}</version>
+            <version>${version.telegrambots}</version>
         </dependency>
         <dependency>
             <groupId>org.telegram</groupId>
             <artifactId>telegrambotsextensions</artifactId>
-            <version>${telegram.version}</version>
+            <version>${version.telegrambotsextensions}</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>${org.projectlombok.version}</version>
+            <version>${version.lombok}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>${ch.qos.logback.classic.version}</version>
+            <version>${version.logback.classic}</version>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-core</artifactId>
-            <version>${ch.qos.logback.core.version}</version>
+            <version>${version.logback.core}</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>${org.slf4j.version}</version>
+            <version>${version.slf4j}</version>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-junit-jupiter</artifactId>
-            <version>${org.mockito.version}</version>
+            <version>${version.mockito.junit.jupiter}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.knowm.xchart</groupId>
             <artifactId>xchart</artifactId>
-            <version>${org.knowm.xchart.version}</version>
+            <version>${version.xchart}</version>
         </dependency>
     </dependencies>
 

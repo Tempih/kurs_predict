@@ -9,14 +9,14 @@ import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-import ru.liga.coursepredict.structure.*;
+import ru.liga.coursepredict.enums.*;
 import ru.liga.coursepredict.system.StageControl;
 
 import java.io.File;
 import java.util.Arrays;
 
 import static java.lang.Math.toIntExact;
-import static ru.liga.coursepredict.telegram.Constans.*;
+import static ru.liga.coursepredict.constants.TelegramConstants.*;
 
 @Slf4j
 public class Bot extends TelegramLongPollingBot {

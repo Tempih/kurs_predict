@@ -1,4 +1,4 @@
-package ru.liga.coursepredict.structure;
+package ru.liga.coursepredict.model;
 
 import java.math.BigDecimal;
 

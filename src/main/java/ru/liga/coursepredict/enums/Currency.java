@@ -1,4 +1,4 @@
-package ru.liga.coursepredict.structure;
+package ru.liga.coursepredict.enums;
 
 import ru.liga.coursepredict.exceptions.IncorrectCurrencyException;
 

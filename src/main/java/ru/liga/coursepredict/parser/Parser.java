@@ -2,7 +2,7 @@ package ru.liga.coursepredict.parser;
 
 import lombok.extern.slf4j.Slf4j;
 import ru.liga.coursepredict.constants.Constants;
-import ru.liga.coursepredict.structure.CourseTable;
+import ru.liga.coursepredict.model.CourseTable;
 
 import java.io.BufferedReader;
 import java.io.IOException;

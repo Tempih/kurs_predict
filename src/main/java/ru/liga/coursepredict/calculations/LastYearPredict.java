@@ -1,21 +1,23 @@
 package ru.liga.coursepredict.calculations;
 
 import lombok.extern.slf4j.Slf4j;
-import ru.liga.coursepredict.formatter.Formatter;
-import ru.liga.coursepredict.structure.CourseTable;
-import ru.liga.coursepredict.structure.PredictMoonMist;
+import ru.liga.coursepredict.model.CourseTable;
+import ru.liga.coursepredict.model.PredictMoonMist;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
+import static ru.liga.coursepredict.constants.Constants.FORMATTER;
 
 @Slf4j
 public class LastYearPredict {
     private static final Integer ONE = 1;
 
-    public List<BigDecimal> predict(List<CourseTable> currencyTable, List<String> subYearDateList, Formatter formatter) {
+    public List<BigDecimal> predict(List<CourseTable> currencyTable, List<String> subYearDateList) {
         int countDays = subYearDateList.size();
         log.debug("Начинаем расчет курса валют");
         List<PredictMoonMist> dateFilteredCurrencyList = currencyTable.stream()
@@ -30,10 +32,11 @@ public class LastYearPredict {
             }
             log.debug("Количество отсутствующих дат {}", subYearDateList.size());
             List<String> notIncludedDatesMinusDate = subYearDateList;
-            int daysAgo = ONE;
             log.debug("Входим в цикл while(true)");
             while (true) {
-                notIncludedDatesMinusDate = formatter.subDaysFromDate(notIncludedDatesMinusDate, daysAgo);
+                notIncludedDatesMinusDate = notIncludedDatesMinusDate.stream()
+                        .map(date -> LocalDate.parse(date, FORMATTER).minusDays(ONE).format(FORMATTER))
+                        .collect(Collectors.toList());
                 log.debug("Вычли один день из дат и получили {}", notIncludedDatesMinusDate);
 
                 List<String> finalNotIncludedDatesMinusDate = notIncludedDatesMinusDate;

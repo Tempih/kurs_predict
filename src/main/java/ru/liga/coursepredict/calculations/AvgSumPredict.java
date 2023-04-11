@@ -1,12 +1,13 @@
 package ru.liga.coursepredict.calculations;
 
 import lombok.extern.slf4j.Slf4j;
-import ru.liga.coursepredict.structure.CourseTable;
+import ru.liga.coursepredict.model.CourseTable;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 public class AvgSumPredict {
@@ -21,14 +22,12 @@ public class AvgSumPredict {
      * @return среднее арифметическое
      */
     public BigDecimal avgSumArray(List<BigDecimal> array) {
-        BigDecimal sum;
         BigDecimal divider = new BigDecimal(array.size());
         if (divider.equals(ZERO_DIVIDE)) {
             log.debug("Произошло деление на 0");
             return null;
         }
-        sum = array.stream().reduce(BigDecimal.ZERO, BigDecimal::add);
-        return sum.divide(divider, MathContext.DECIMAL128);
+        return array.stream().reduce(BigDecimal.ZERO, BigDecimal::add).divide(divider, MathContext.DECIMAL128);
     }
 
     /**
@@ -39,10 +38,10 @@ public class AvgSumPredict {
      */
     public List<BigDecimal> predict(List<CourseTable> currencyTable, Integer countDay) {
         log.debug("Начинаем расчет курса валют");
-        List<BigDecimal> lastCourses = new ArrayList<>(currencyTable.stream()
+        List<BigDecimal> lastCourses = currencyTable.stream()
                 .limit(COUNT_DAYS_FOR_AVG_CALCULATION)
                 .map(values -> values.getCurs().divide(new BigDecimal(values.getNominal()), MathContext.DECIMAL128))
-                .toList());
+                .collect(Collectors.toList());
         List<BigDecimal> predictedCourses = new ArrayList<>();
         if (lastCourses.size() < COUNT_DAYS_FOR_AVG_CALCULATION) {
             log.debug("Ошибка в получении последних {} дней",COUNT_DAYS_FOR_AVG_CALCULATION);

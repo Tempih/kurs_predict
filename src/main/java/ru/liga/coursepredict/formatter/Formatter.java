@@ -3,7 +3,7 @@ package ru.liga.coursepredict.formatter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.text.WordUtils;
 import ru.liga.coursepredict.constants.Constants;
-import ru.liga.coursepredict.structure.PredictResult;
+import ru.liga.coursepredict.model.PredictResult;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -11,7 +11,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -19,8 +18,8 @@ import java.util.Locale;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
-import static ru.liga.coursepredict.constants.Constants.DASH;
-import static ru.liga.coursepredict.constants.Constants.ZERO;
+import static ru.liga.coursepredict.constants.Constants.*;
+
 @Slf4j
 public class Formatter {
     private static final Integer ONE_DAY = 1;
@@ -35,7 +34,6 @@ public class Formatter {
     private static final Integer LENGTH_AFTER_SPLIT_WITHOUT_INTEGER_AND_DECIMAL_PART = 0;
     private static final Integer START_INDEX_DAY = 0;
     private static final Integer START_INDEX_YEAR = 6;
-    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy");
     private static final String DATE_FORMAT_WITH_DAY = "EE dd.MM.yyyy";
     private static final ZoneId ZONE_ID = ZoneId.systemDefault();
 
@@ -135,11 +133,6 @@ public class Formatter {
     }
     public Integer randomYear(Integer minYear, Integer maxYear){
         return ThreadLocalRandom.current().nextInt(minYear, maxYear+ONE_YEAR);
-    }
-    public List<String> subDaysFromDate(List<String> dateList, Integer subDays) {
-        return dateList.stream()
-                .map(date -> LocalDate.parse(date, FORMATTER).minusDays(subDays).format(FORMATTER))
-                .collect(Collectors.toList());
     }
 
     public BigDecimal convertDateToUnixTime(String date){

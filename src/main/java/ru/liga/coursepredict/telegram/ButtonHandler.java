@@ -4,8 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import ru.liga.coursepredict.intefaces.DateValidator;
-import ru.liga.coursepredict.structure.Period;
-import ru.liga.coursepredict.structure.PredictAlgorithms;
+import ru.liga.coursepredict.enums.Period;
+import ru.liga.coursepredict.enums.PredictAlgorithms;
 import ru.liga.coursepredict.system.StageControl;
 import ru.liga.coursepredict.validation.DateValidatorUsingLocalDate;
 
@@ -16,20 +16,20 @@ import java.util.List;
 
 import static java.lang.Math.toIntExact;
 import static ru.liga.coursepredict.constants.Constants.*;
-import static ru.liga.coursepredict.telegram.Constans.*;
+import static ru.liga.coursepredict.constants.TelegramConstants.*;
 
 @Slf4j
 public class ButtonHandler {
     private static String periodParam;
-    public static String date;
-    public static String alg;
-    public static String output;
-    DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
-    DateValidator validator = new DateValidatorUsingLocalDate(dateFormatter);
+    private static String date;
+    private static String alg;
+    private static String output;
+    private static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
+    private static final DateValidator validator = new DateValidatorUsingLocalDate(dateFormatter);
     private static List<String> cur = new ArrayList<>();
     private static final Keyboards keyboards = new Keyboards();
-    String text = EMPTY;
-    InlineKeyboardMarkup kb;
+    private static String text = EMPTY;
+    private static InlineKeyboardMarkup kb;
 
     public EditMessageText editMessageText(Long id, String text, int msgId, InlineKeyboardMarkup kb) {
         log.debug("Начинаем формировать EditMessageText");

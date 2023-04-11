@@ -5,9 +5,9 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import ru.liga.coursepredict.formatter.Formatter;
 import ru.liga.coursepredict.parser.Parser;
-import ru.liga.coursepredict.structure.CourseTable;
-import ru.liga.coursepredict.structure.PredictResult;
-import ru.liga.coursepredict.system.StageControl;
+import ru.liga.coursepredict.model.CourseTable;
+import ru.liga.coursepredict.model.PredictResult;
+import ru.liga.coursepredict.system.*;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -23,7 +23,11 @@ import java.util.Map;
 public class CursPredictTest {
     private final ByteArrayOutputStream outputStreamCaptor = new ByteArrayOutputStream();
     StageControl stageControl = new StageControl();
+    private static final PeriodSelectStage selectPeriod = new PeriodSelectStage();
     String input;
+    private static final CurrencySelectStage selectCurrency = new CurrencySelectStage();
+    private static final OutputStage outputStage = new OutputStage();
+    private static final AlgorithmSelectStage selectPredictAlgorithm = new AlgorithmSelectStage();
     Formatter formatter = new Formatter();
     Formatter formatterMock = Mockito.spy(Formatter.class);
     Parser parser = new Parser();
@@ -133,29 +137,29 @@ public class CursPredictTest {
 
     @Test
     public void checkCurrencyUsdSelect() {
-        assertThat(stageControl.selectCurrency("usd", 1L).stream().map(CourseTable::toString).toList().toString())
+        assertThat(selectCurrency.getCurrencyData("usd", 1L).stream().map(CourseTable::toString).toList().toString())
                 .contains("1;17.03.2023;76.4095;Доллар США, 1;16.03.2023;75.7457;Доллар США, 1;15.03.2023;75.1927;Доллар США, 1;14.03.2023;75.4609;Доллар США");
     }
 
     @Test
     public void checkPeriodTomorrowSelect() {
-        assertThat(stageControl.selectPeriod("tomorrow", 1L)).isEqualTo(1);
+        assertThat(selectPeriod.selectPeriod("tomorrow", 1L)).isEqualTo(1);
     }
 
     @Test
     public void checkPredictMoonWithOneCurrency() {
         Map<String, List<CourseTable>> currencyTables = new HashMap<>();
-        currencyTables.put("usd", stageControl.selectCurrency("usd", 1L));
-        assertThat(stageControl.startPredict(currencyTables, "period", "week", "moon", 1L).stream().map(PredictResult::toString))
+        currencyTables.put("usd", selectCurrency.getCurrencyData("usd", 1L));
+        assertThat(selectPredictAlgorithm.startPredict(currencyTables, "period", "week", "moon", 1L).stream().map(PredictResult::toString))
                 .contains("usd;[104.8012, 103.9524, 103.9524, 103.9524, 104.6819, 104.0741, 103.1618];[18.03.2023, 19.03.2023, 20.03.2023, 21.03.2023, 22.03.2023, 23.03.2023, 24.03.2023]");
     }
 
     @Test
     public void checkPredictMoonWithTwoCurrency() {
         Map<String, List<CourseTable>> currencyTables = new HashMap<>();
-        currencyTables.put("usd", stageControl.selectCurrency("usd", 1L));
-        currencyTables.put("try", stageControl.selectCurrency("try", 1L));
-        assertThat(stageControl.startPredict(currencyTables, "period", "week", "moon", 1L).stream().map(PredictResult::toString))
+        currencyTables.put("usd", selectCurrency.getCurrencyData("usd", 1L));
+        currencyTables.put("try", selectCurrency.getCurrencyData("try", 1L));
+        assertThat(selectPredictAlgorithm.startPredict(currencyTables, "period", "week", "moon", 1L).stream().map(PredictResult::toString))
                 .contains("usd;[104.8012, 103.9524, 103.9524, 103.9524, 104.6819, 104.0741, 103.1618];[18.03.2023, 19.03.2023, 20.03.2023, 21.03.2023, 22.03.2023, 23.03.2023, 24.03.2023]")
                 .contains("try;[71.0257, 70.1623, 70.1623, 70.1623, 70.6108, 70.1890, 69.4912];[18.03.2023, 19.03.2023, 20.03.2023, 21.03.2023, 22.03.2023, 23.03.2023, 24.03.2023]");
     }
@@ -163,9 +167,9 @@ public class CursPredictTest {
     @Test
     public void checkCreateOutputList() {
         Map<String, List<CourseTable>> currencyTables = new HashMap<>();
-        currencyTables.put("lev", stageControl.selectCurrency("lev", 1L));
-        List<PredictResult> predictResultList = stageControl.startPredict(currencyTables, "period", "week", "reg", 1L);
-        assertThat(stageControl.startOutputResult(predictResultList, "list"))
+        currencyTables.put("lev", ("lev", 1L));
+        List<PredictResult> predictResultList = selectPredictAlgorithm.startPredict(currencyTables, "period", "week", "reg", 1L);
+        assertThat(outputStage.startOutputResult(predictResultList, "list"))
                 .contains("""
                         LEV
                         Сб 18.03.2023 - 40,91
@@ -180,10 +184,10 @@ public class CursPredictTest {
     @Test
     public void checkCreateOutputGraph() {
         Map<String, List<CourseTable>> currencyTables = new HashMap<>();
-        currencyTables.put("lev", stageControl.selectCurrency("lev", 1L));
-        currencyTables.put("dram", stageControl.selectCurrency("dram", 1L));
-        List<PredictResult> predictResultList = stageControl.startPredict(currencyTables, "period", "week", "reg", 1L);
-        assertThat(stageControl.startOutputResult(predictResultList, "graph"))
+        currencyTables.put("lev", selectCurrency.getCurrencyData("lev", 1L));
+        currencyTables.put("dram", selectCurrency.getCurrencyData("dram", 1L));
+        List<PredictResult> predictResultList = selectPredictAlgorithm.startPredict(currencyTables, "period", "week", "reg", 1L);
+        assertThat(outputStage.startOutputResult(predictResultList, "graph"))
                 .isEqualTo("XYLineChart.png");
     }
 
@@ -196,13 +200,13 @@ public class CursPredictTest {
 
     @Test
     public void checkGetMaxYear(){
-        assertThat(parser.getMaxYear(stageControl.selectCurrency("lev", 1L)))
+        assertThat(parser.getMaxYear(selectCurrency.getCurrencyData("lev", 1L)))
                 .isEqualTo(2023);
     }
 
     @Test
     public void checkGetMinYear(){
-        assertThat(parser.getMinYear(stageControl.selectCurrency("lev", 1L)))
+        assertThat(parser.getMinYear(selectCurrency.getCurrencyData("lev", 1L)))
                 .isEqualTo(2005);
     }
 

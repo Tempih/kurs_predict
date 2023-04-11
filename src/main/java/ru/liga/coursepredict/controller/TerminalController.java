@@ -1,10 +1,10 @@
-package ru.liga.coursepredict.printer;
+package ru.liga.coursepredict.controller;
 
 import java.util.Scanner;
 
 import static ru.liga.coursepredict.outputcreater.InfoOutput.giveInputInfo;
 
-public class WorkWithTerminal {
+public class TerminalController {
 
     /**
      * Класс textOutput производит вывод сообщения в консоль

@@ -1,6 +1,6 @@
-package ru.liga.coursepredict.telegram;
+package ru.liga.coursepredict.constants;
 
-public class Constans {
+public class TelegramConstants {
     public static final String CURRENCY_SELECT = "Выбраны следующие валюты:\n";
     public static final String OUTPUT_TYPE = "\nВыбран вывод в виде:";
     public static final String ALG_OF_PREDICT = "\nВыбран алгоритм предсказания:";

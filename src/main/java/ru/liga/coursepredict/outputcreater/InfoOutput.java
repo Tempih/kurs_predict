@@ -1,7 +1,7 @@
 package ru.liga.coursepredict.outputcreater;
 
-import ru.liga.coursepredict.structure.Currency;
-import ru.liga.coursepredict.structure.Period;
+import ru.liga.coursepredict.enums.Currency;
+import ru.liga.coursepredict.enums.Period;
 
 import static ru.liga.coursepredict.constants.Constants.LINE_BREAKER;
 

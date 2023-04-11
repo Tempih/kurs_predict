@@ -4,12 +4,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
-import ru.liga.coursepredict.structure.*;
+import ru.liga.coursepredict.enums.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static ru.liga.coursepredict.telegram.Constans.*;
+import static ru.liga.coursepredict.constants.TelegramConstants.*;
 
 @Slf4j
 public class Keyboards {

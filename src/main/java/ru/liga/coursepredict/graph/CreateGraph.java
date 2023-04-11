@@ -5,7 +5,7 @@ import org.knowm.xchart.XYChart;
 import org.knowm.xchart.XYChartBuilder;
 import org.knowm.xchart.XYSeries;
 import org.knowm.xchart.style.Styler;
-import ru.liga.coursepredict.structure.PredictResult;
+import ru.liga.coursepredict.model.PredictResult;
 
 import java.text.DateFormat;
 import java.text.ParseException;
