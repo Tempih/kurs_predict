@@ -5,6 +5,7 @@ import org.knowm.xchart.XYChart;
 import org.knowm.xchart.XYChartBuilder;
 import org.knowm.xchart.XYSeries;
 import org.knowm.xchart.style.Styler;
+import ru.liga.coursepredict.exceptions.IncorrectDateFormatException;
 import ru.liga.coursepredict.model.PredictResult;
 
 import java.text.DateFormat;
@@ -25,7 +26,7 @@ public class CreateGraph {
     private static final String X_LABEL = "Дата";
     private static final String Y_LABEL = "Курс";
 
-    public XYChart createGraph(List<PredictResult> predictResultList) {
+    public XYChart createGraph(List<PredictResult> predictResultList) throws IncorrectDateFormatException {
         log.debug("Начинаем рисовать график");
         XYChart chart = new XYChartBuilder().width(WIDTH).height(HEIGHT)
                 .title(TITLE)
@@ -48,7 +49,7 @@ public class CreateGraph {
                 try {
                     dates.add(formatter.parse(result.getDates().get(i)));
                 } catch (ParseException e) {
-                    throw new RuntimeException(e);
+                   throw new IncorrectDateFormatException();
                 }
                 course.add(Double.parseDouble(result.getPredictedCurrency().get(i).toString()));
             }

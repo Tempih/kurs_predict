@@ -3,6 +3,7 @@ package ru.liga.coursepredict.formatter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.text.WordUtils;
 import ru.liga.coursepredict.constants.Constants;
+import ru.liga.coursepredict.exceptions.IncorrectDateFormatException;
 import ru.liga.coursepredict.model.PredictResult;
 
 import java.math.BigDecimal;
@@ -44,14 +45,14 @@ public class Formatter {
      * @param date - дата
      * @return дата в формате [день недели дата](Вс 19.03.2023)
      */
-    public String addDayOfWeek(String date) {
+    public String addDayOfWeek(String date) throws IncorrectDateFormatException {
         Date currentDate;
         try {
             currentDate = new SimpleDateFormat(DATE_FORMAT).parse(date);
         } catch (ParseException e) {
-            throw new RuntimeException(e);
+            throw new IncorrectDateFormatException();
         }
-        return WordUtils.capitalize(new  SimpleDateFormat(DATE_FORMAT_WITH_DAY, Locale.getDefault()).format(currentDate));
+        return WordUtils.capitalize(new SimpleDateFormat(DATE_FORMAT_WITH_DAY, Locale.getDefault()).format(currentDate));
     }
 
     /**
@@ -81,9 +82,9 @@ public class Formatter {
      *
      * @param outputDate - дата
      * @param newCurs    - значение курса валют
-     * @return  строка в формате [дата - значение курса валют](Пт 24.03.2023 - 40,01)
+     * @return строка в формате [дата - значение курса валют](Пт 24.03.2023 - 40,01)
      */
-    public String convertDate(String outputDate, BigDecimal newCurs) {
+    public String convertDate(String outputDate, BigDecimal newCurs) throws IncorrectDateFormatException {
         String date = addDayOfWeek(outputDate);
         String curs = newCurs.setScale(2, RoundingMode.DOWN).toString().replace(".", ",");
         return date.concat(Constants.SPACE).concat(DASH).concat(Constants.SPACE).concat(curs);
@@ -108,14 +109,18 @@ public class Formatter {
     /**
      * startFormatResult - создает строку в формате [дата] - [курс валюты] и добавляент его в список для вывода
      *
-     * @param predictResult  - кол-во днея для предсказания
+     * @param predictResult - кол-во днея для предсказания
      * @return resultList - список строк в формате [дата] - [курс валюты]
      */
     public List<String> startFormatResult(PredictResult predictResult) {
         List<String> resultList = new ArrayList<>();
         log.debug("Начинаем формировать выходной результат");
-        for (int i = 0; i < predictResult.getPredictedCurrency().size(); i++) {
-            resultList.add(convertDate(predictResult.getDates().get(i), predictResult.getPredictedCurrency().get(i)));
+        try {
+            for (int i = 0; i < predictResult.getPredictedCurrency().size(); i++) {
+                resultList.add(convertDate(predictResult.getDates().get(i), predictResult.getPredictedCurrency().get(i)));
+            }
+        } catch (IncorrectDateFormatException e) {
+            log.debug("Ошибка в формате даты");
         }
         log.debug("Закончили формировать выходной результат");
         return resultList;
@@ -126,20 +131,22 @@ public class Formatter {
                 .map(date -> LocalDate.parse(date, FORMATTER).minusYears(ONE_YEAR).format(FORMATTER))
                 .collect(Collectors.toList());
     }
+
     public List<String> randomYearForDate(List<String> dateList, Integer minYear, Integer maxYear) {
         return dateList.stream()
                 .map(date -> LocalDate.parse(date.substring(START_INDEX_DAY, START_INDEX_YEAR).concat(Integer.toString(randomYear(minYear, maxYear))), FORMATTER).format(FORMATTER))
                 .collect(Collectors.toList());
     }
-    public Integer randomYear(Integer minYear, Integer maxYear){
-        return ThreadLocalRandom.current().nextInt(minYear, maxYear+ONE_YEAR);
+
+    public Integer randomYear(Integer minYear, Integer maxYear) {
+        return ThreadLocalRandom.current().nextInt(minYear, maxYear + ONE_YEAR);
     }
 
-    public BigDecimal convertDateToUnixTime(String date){
-       return new BigDecimal(LocalDate.parse(date, FORMATTER).atStartOfDay(ZONE_ID).toEpochSecond()/DIVIDER_FOR_UNIX);
+    public BigDecimal convertDateToUnixTime(String date) {
+        return new BigDecimal(LocalDate.parse(date, FORMATTER).atStartOfDay(ZONE_ID).toEpochSecond() / DIVIDER_FOR_UNIX);
     }
 
-    public BigDecimal convertDateToUnixTimeMinusMonth(String date){
-        return new BigDecimal(LocalDate.parse(date, FORMATTER).minusMonths(ONE_MONTH).atStartOfDay(ZONE_ID).toEpochSecond()/DIVIDER_FOR_UNIX);
+    public BigDecimal convertDateToUnixTimeMinusMonth(String date) {
+        return new BigDecimal(LocalDate.parse(date, FORMATTER).minusMonths(ONE_MONTH).atStartOfDay(ZONE_ID).toEpochSecond() / DIVIDER_FOR_UNIX);
     }
 }

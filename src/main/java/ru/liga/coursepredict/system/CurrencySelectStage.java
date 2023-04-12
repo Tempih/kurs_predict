@@ -5,7 +5,7 @@ import ru.liga.coursepredict.enums.Currency;
 import ru.liga.coursepredict.exceptions.IncorrectCurrencyException;
 import ru.liga.coursepredict.model.CourseTable;
 import ru.liga.coursepredict.parser.Parser;
-import ru.liga.coursepredict.telegram.Bot;
+import ru.liga.coursepredict.telegram.Sender;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -13,11 +13,12 @@ import java.util.List;
 
 import static ru.liga.coursepredict.outputcreater.InfoOutput.giveCurrencyError;
 import static ru.liga.coursepredict.outputcreater.InfoOutput.giveFileError;
+
 @Slf4j
 
 public class CurrencySelectStage {
     private static final Parser parser = new Parser();
-    private static final Bot bot = new Bot();
+    private static final Sender sender = new Sender();
     private static final String DIRECTORY = "course_data";
     private static final String USD_FILE = "usd.csv";
     private static final String LEV_FILE = "lev.csv";
@@ -41,12 +42,12 @@ public class CurrencySelectStage {
             }
         } catch (RuntimeException e) {
             log.debug("Ошибка при считывании из файла");
-            bot.sendText(chatId, giveFileError());
+            sender.sendText(chatId, giveFileError());
 
             return currencyList;
         } catch (IncorrectCurrencyException e) {
             log.debug("Введенная валюта отсутствует в списке");
-            bot.sendText(chatId, giveCurrencyError(Currency.values()));
+            sender.sendText(chatId, giveCurrencyError(Currency.values()));
             return currencyList;
         }
         log.info("Для валюты:{}, данные получены из файла", currency);

@@ -44,7 +44,7 @@ public class AvgSumPredict {
                 .collect(Collectors.toList());
         List<BigDecimal> predictedCourses = new ArrayList<>();
         if (lastCourses.size() < COUNT_DAYS_FOR_AVG_CALCULATION) {
-            log.debug("Ошибка в получении последних {} дней",COUNT_DAYS_FOR_AVG_CALCULATION);
+            log.debug("Ошибка в получении последних {} дней", COUNT_DAYS_FOR_AVG_CALCULATION);
             return lastCourses;
         }
         for (int i = 0; i < countDay; i++) {

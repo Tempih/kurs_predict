@@ -18,8 +18,8 @@ public class LinearRegression {
     /**
      * Performs a linear regression on the data points {@code (y[i], x[i])}.
      *
-     * @param  x the values of the predictor variable
-     * @param  y the corresponding values of the response variable
+     * @param x the values of the predictor variable
+     * @param y the corresponding values of the response variable
      * @throws IllegalArgumentException if the lengths of the two arrays are not equal
      */
     public LinearRegression(List<BigDecimal> x, List<BigDecimal> y) {
@@ -34,7 +34,7 @@ public class LinearRegression {
         BigDecimal sumx;
         BigDecimal sumy;
         sumx = x.stream().reduce(BigDecimal.ZERO, BigDecimal::add);
-        sumy  = y.stream().reduce(BigDecimal.ZERO, BigDecimal::add);
+        sumy = y.stream().reduce(BigDecimal.ZERO, BigDecimal::add);
 
         BigDecimal xbar = sumx.divide(new BigDecimal(x.size()), MathContext.DECIMAL128);
         BigDecimal ybar = sumy.divide(new BigDecimal(x.size()), MathContext.DECIMAL128);
@@ -47,7 +47,7 @@ public class LinearRegression {
             yybar = yybar.add((y.get(i).subtract(ybar)).multiply(y.get(i).subtract(ybar)));
             xybar = xybar.add((x.get(i).subtract(xbar)).multiply(y.get(i).subtract(ybar)));
         }
-        slope  = xybar.divide(xxbar, MathContext.DECIMAL128);
+        slope = xybar.divide(xxbar, MathContext.DECIMAL128);
         intercept = ybar.subtract(slope.multiply(xbar));
 
         BigDecimal rss = new BigDecimal(ZERO);
@@ -58,9 +58,9 @@ public class LinearRegression {
             ssr = ssr.add((fit.subtract(ybar)).multiply(fit.subtract(ybar)));
         }
 
-        int degreesOfFreedom = n-2;
-        r2    = ssr.divide(yybar, MathContext.DECIMAL128);
-        BigDecimal svar  = rss.divide(new BigDecimal(degreesOfFreedom), MathContext.DECIMAL128);
+        int degreesOfFreedom = n - 2;
+        r2 = ssr.divide(yybar, MathContext.DECIMAL128);
+        BigDecimal svar = rss.divide(new BigDecimal(degreesOfFreedom), MathContext.DECIMAL128);
         svar1 = svar.divide(xxbar, MathContext.DECIMAL128);
         svar0 = svar.divide(new BigDecimal(n), MathContext.DECIMAL128).add(xbar.multiply(xbar).multiply(svar1));
         log.debug("Закончили расчет коэффициентов для уравнения");
@@ -89,7 +89,7 @@ public class LinearRegression {
      * Returns the coefficient of determination <em>R</em><sup>2</sup>.
      *
      * @return the coefficient of determination <em>R</em><sup>2</sup>,
-     *         which is a real number between 0 and 1
+     * which is a real number between 0 and 1
      */
     public BigDecimal R2() {
         return r2;
@@ -117,9 +117,9 @@ public class LinearRegression {
      * Returns the expected response {@code y} given the value of the predictor
      * variable {@code x}.
      *
-     * @param  x the value of the predictor variable
+     * @param x the value of the predictor variable
      * @return the expected response {@code y} given the value of the predictor
-     *         variable {@code x}
+     * variable {@code x}
      */
     public BigDecimal predict(BigDecimal x) {
         return slope.multiply(x).add(intercept);
@@ -129,8 +129,8 @@ public class LinearRegression {
      * Returns a string representation of the simple linear regression model.
      *
      * @return a string representation of the simple linear regression model,
-     *         including the best-fit line and the coefficient of determination
-     *         <em>R</em><sup>2</sup>
+     * including the best-fit line and the coefficient of determination
+     * <em>R</em><sup>2</sup>
      */
     public String toString() {
         return String.format("%.2f n + %.2f", slope(), intercept()) +

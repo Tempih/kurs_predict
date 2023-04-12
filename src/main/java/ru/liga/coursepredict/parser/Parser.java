@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static ru.liga.coursepredict.constants.Constants.ZERO;
+
 @Slf4j
 public class Parser {
     private static final String DELIMITER = ";";

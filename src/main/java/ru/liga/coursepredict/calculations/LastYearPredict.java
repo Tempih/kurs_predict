@@ -27,7 +27,7 @@ public class LastYearPredict {
 
         if (dateFilteredCurrencyList.size() != countDays) {
             log.debug("Не все даты были в прошлом, начинаем перебор прошлых дней");
-            for(PredictMoonMist predictMoonMist: dateFilteredCurrencyList){
+            for (PredictMoonMist predictMoonMist : dateFilteredCurrencyList) {
                 subYearDateList.remove(predictMoonMist.getDate());
             }
             log.debug("Количество отсутствующих дат {}", subYearDateList.size());
@@ -51,7 +51,7 @@ public class LastYearPredict {
                     log.debug("Вышли из цикла while(true)");
                     break;
                 }
-                for (PredictMoonMist predictMoonMist:newCursAndDatesForAdd){
+                for (PredictMoonMist predictMoonMist : newCursAndDatesForAdd) {
                     notIncludedDatesMinusDate.remove(predictMoonMist.getDate());
                 }
                 log.debug("Новая итерация цикла while(true)");

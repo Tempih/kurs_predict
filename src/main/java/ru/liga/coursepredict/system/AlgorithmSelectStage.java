@@ -10,7 +10,7 @@ import ru.liga.coursepredict.formatter.Formatter;
 import ru.liga.coursepredict.model.CourseTable;
 import ru.liga.coursepredict.model.PredictResult;
 import ru.liga.coursepredict.parser.Parser;
-import ru.liga.coursepredict.telegram.Bot;
+import ru.liga.coursepredict.telegram.Sender;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -18,9 +18,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-
+import static ru.liga.coursepredict.constants.Constants.EMPTY_STRING;
+import static ru.liga.coursepredict.constants.Constants.ZERO;
 import static ru.liga.coursepredict.outputcreater.InfoOutput.giveCalculationError;
-import static ru.liga.coursepredict.constants.Constants.*;
 
 @Slf4j
 
@@ -30,9 +30,10 @@ public class AlgorithmSelectStage {
     private static final AvgSumPredict avgSumPredict = new AvgSumPredict();
     private static final LastYearPredict lastYearPredict = new LastYearPredict();
     private static final PeriodSelectStage selectPeriod = new PeriodSelectStage();
-    private static final Bot bot = new Bot();
+    private static final Sender sender = new Sender();
     private static final Formatter formatter = new Formatter();
     private static final Parser parser = new Parser();
+
     public List<PredictResult> startPredict(Map<String, List<CourseTable>> currencyTables, String inputPredictPeriod, String inputParamPeriod, String predictAlgorithm, Long chatId) {
         PredictPeriod predictPeriod = PredictPeriod.valueOf(inputPredictPeriod.toUpperCase());
         Integer countDays = Integer.parseInt(ZERO);
@@ -68,7 +69,7 @@ public class AlgorithmSelectStage {
                     predictResult = avgSumPredict.predict(item.getValue(), countDays);
                     if (predictResult.size() != countDays) {
                         log.debug("Количество дней не совпало с количеством полученных курс валюты");
-                        bot.sendText(chatId,giveCalculationError());
+                        sender.sendText(chatId, giveCalculationError());
                         return new ArrayList<>();
                     }
                     predictResultList.add(new PredictResult(item.getKey(), predictResult, dateList));
@@ -80,9 +81,9 @@ public class AlgorithmSelectStage {
                     List<String> dateListMinusOneYear = formatter.subYearFromDate(dateList);
                     log.debug("Год был вычтен из дат для предсказания");
                     predictResult = lastYearPredict.predict(item.getValue(), dateListMinusOneYear);
-                    if (predictResult.size()!=countDays) {
+                    if (predictResult.size() != countDays) {
                         log.debug("Количество дней не совпало с количеством полученных курс валюты");
-                        bot.sendText(chatId,giveCalculationError());
+                        sender.sendText(chatId, giveCalculationError());
                         return new ArrayList<>();
                     }
                     predictResultList.add(new PredictResult(item.getKey(), predictResult, dateList));
@@ -100,7 +101,7 @@ public class AlgorithmSelectStage {
                     predictResult = lastYearPredict.predict(item.getValue(), dateListWithRandomYear);
                     if (predictResult.size() != countDays) {
                         log.debug("Количество дней не совпало с количеством полученных курс валюты");
-                        bot.sendText(chatId,giveCalculationError());
+                        sender.sendText(chatId, giveCalculationError());
                         return new ArrayList<>();
                     }
                     predictResultList.add(new PredictResult(item.getKey(), predictResult, dateList));
@@ -131,7 +132,7 @@ public class AlgorithmSelectStage {
                     log.debug("Предсказание по полученному уравнению закончилось");
                     if (predictResult.size() != countDays) {
                         log.debug("Количество дней не совпало с количеством полученных курс валюты");
-                        bot.sendText(chatId,giveCalculationError());
+                        sender.sendText(chatId, giveCalculationError());
                         return new ArrayList<>();
                     }
                     predictResultList.add(new PredictResult(item.getKey(), predictResult, dateList));

@@ -3,9 +3,9 @@ package ru.liga.coursepredict.telegram;
 import lombok.extern.slf4j.Slf4j;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
-import ru.liga.coursepredict.intefaces.DateValidator;
 import ru.liga.coursepredict.enums.Period;
 import ru.liga.coursepredict.enums.PredictAlgorithms;
+import ru.liga.coursepredict.intefaces.DateValidator;
 import ru.liga.coursepredict.system.StageControl;
 import ru.liga.coursepredict.validation.DateValidatorUsingLocalDate;
 
@@ -116,7 +116,7 @@ public class ButtonHandler {
 
     public EditMessageText buttonTapCurrencyDelete(Long id, String data, int msgId) {
         kb = null;
-        log.debug("Удаляем валюту, получено значение:{}",data);
+        log.debug("Удаляем валюту, получено значение:{}", data);
         if (!(data.equals(ADD))) {
             cur.remove(data.substring(INDEX_OF_START, data.length() - LENGTH_WORD_TO_DEL_FROM_CURRENCY));
             log.debug("Валюту {} удалили", data);

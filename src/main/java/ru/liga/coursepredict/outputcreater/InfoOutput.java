@@ -45,12 +45,15 @@ public class InfoOutput {
     public static String giveFirstWordError() {
         return FIRST_WORD_ERROR.concat(LINE_BREAKER);
     }
+
     public static String giveFormatError() {
         return LINE_BREAKER.concat(FORMAT_INPUT_ERROR).concat(LINE_BREAKER);
     }
+
     public static String giveInputInfo() {
         return INPUT_INFO;
     }
+
     public static String giveCalculationError() {
         return LINE_BREAKER.concat(CALCULATION_ERROR).concat(LINE_BREAKER);
     }

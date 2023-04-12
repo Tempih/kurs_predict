@@ -2,6 +2,7 @@ package ru.liga.coursepredict.system;
 
 import lombok.extern.slf4j.Slf4j;
 import ru.liga.coursepredict.enums.Output;
+import ru.liga.coursepredict.exceptions.IncorrectDateFormatException;
 import ru.liga.coursepredict.formatter.Formatter;
 import ru.liga.coursepredict.graph.CreateGraph;
 import ru.liga.coursepredict.model.PredictResult;
@@ -28,7 +29,7 @@ public class OutputStage {
                 try {
                     log.debug("Начался процесс формирования графика");
                     outputString = saveToFile(createGraph.createGraph(predictResult));
-                } catch (IOException e) {
+                } catch (IOException | IncorrectDateFormatException e) {
                     log.debug("Ошибка в работе программы");
                 }
                 log.debug("Процесс формирования графика закончился");

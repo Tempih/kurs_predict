@@ -13,6 +13,4 @@ public class Constants {
     public static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 
 
-
-
 }

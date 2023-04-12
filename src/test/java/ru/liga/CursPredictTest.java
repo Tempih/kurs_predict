@@ -3,6 +3,7 @@ package ru.liga;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import ru.liga.coursepredict.exceptions.IncorrectDateFormatException;
 import ru.liga.coursepredict.formatter.Formatter;
 import ru.liga.coursepredict.parser.Parser;
 import ru.liga.coursepredict.model.CourseTable;
@@ -167,7 +168,7 @@ public class CursPredictTest {
     @Test
     public void checkCreateOutputList() {
         Map<String, List<CourseTable>> currencyTables = new HashMap<>();
-        currencyTables.put("lev", ("lev", 1L));
+        currencyTables.put("lev", selectCurrency.getCurrencyData("lev", 1L));
         List<PredictResult> predictResultList = selectPredictAlgorithm.startPredict(currencyTables, "period", "week", "reg", 1L);
         assertThat(outputStage.startOutputResult(predictResultList, "list"))
                 .contains("""
@@ -210,11 +211,6 @@ public class CursPredictTest {
                 .isEqualTo(2005);
     }
 
-    @Test
-    public void checkAddDayOfWeek(){
-        assertThat(formatter.addDayOfWeek("20.12.2019"))
-                .isEqualTo("Пт 20.12.2019");
-    }
 
     @Test
     public void checkCheckLengthOfCursWithTwoDecimals(){
@@ -236,8 +232,12 @@ public class CursPredictTest {
 
     @Test
     public void checkConvertDate(){
-        assertThat(formatter.convertDate("20.12.2019", new BigDecimal("45.89")))
-                .isEqualTo("Пт 20.12.2019 - 45,89");
+        try {
+            assertThat(formatter.convertDate("20.12.2019", new BigDecimal("45.89")))
+                    .isEqualTo("Пт 20.12.2019 - 45,89");
+        } catch (IncorrectDateFormatException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Test

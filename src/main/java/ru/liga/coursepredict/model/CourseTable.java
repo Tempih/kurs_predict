@@ -33,6 +33,6 @@ public class CourseTable {
 
     @Override
     public String toString() {
-        return nominal+";"+date+";"+curs+";"+cdx;
+        return nominal + ";" + date + ";" + curs + ";" + cdx;
     }
 }

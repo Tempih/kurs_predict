@@ -16,7 +16,7 @@ public class PredictMoonMist {
         return course;
     }
 
-    public String  getDate() {
+    public String getDate() {
         return date;
     }
 
