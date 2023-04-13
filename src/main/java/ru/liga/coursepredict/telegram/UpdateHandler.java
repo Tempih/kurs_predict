@@ -19,6 +19,12 @@ public class UpdateHandler {
     private static final ButtonHandler buttonHandler = new ButtonHandler();
     private static final StageControl stageControl = new StageControl();
     private static final Sender sender = new Sender();
+    private static final String CURRENCY_ADD_ENUM_STRING = Arrays.stream(Currency.values()).map(currency -> currency.toString().concat(ADD)).toList().toString().toLowerCase();
+    private static final String CURRENCY_DEL_ENUM_STRING = Arrays.stream(Currency.values()).map(currency -> currency.toString().concat(DEL)).toList().toString().toLowerCase();
+    private static final String OUTPUT_ENUM_STRING = Arrays.stream(Output.values()).map(Enum::toString).toList().toString().toLowerCase();
+    private static final String ALGORITHMS_ENUM_STRING = Arrays.stream(PredictAlgorithms.values()).map(Enum::toString).toList().toString().toLowerCase();
+    private static final String PERIOD_ENUM_STRING = Arrays.stream(Period.values()).map(Enum::toString).toList().toString().toLowerCase();
+    private static final String PERIOD_PREDICT_ENUM_STRING = Arrays.stream(PredictPeriod.values()).map(Enum::toString).toList().toString();
 
     public void handleMessage(Message message) throws IncorrectDateFormatException {
         String messageText = message.getText();
@@ -68,7 +74,7 @@ public class UpdateHandler {
                 log.debug("Ответ {} совпал с {}", callData, RATE);
                 bot.execute(buttonHandler.buttonTapRate(chatId, messageId));
             }
-            if (callData.equals(PARAM_PERIOD) || Arrays.stream(PredictPeriod.values()).map(Enum::toString).toList().toString().equalsIgnoreCase(callData)) {
+            if (callData.equals(PARAM_PERIOD) || PERIOD_PREDICT_ENUM_STRING.equalsIgnoreCase(callData)){
                 log.debug("Ответ {} попал в формирование buttonTapDateOrPeriod", callData);
                 bot.execute(buttonHandler.buttonTapDateOrPeriod(chatId, callData, messageId));
             }
@@ -80,11 +86,11 @@ public class UpdateHandler {
                 log.debug("Ответ {} попал в формирование buttonTapPeriod", callData);
                 bot.execute(buttonHandler.buttonTapPeriod(chatId, callData, messageId));
             }
-            if (callData.equals(ALG) || Arrays.stream(Period.values()).map(Enum::toString).toList().toString().toLowerCase().contains(callData.toLowerCase())) {
+            if (callData.equals(ALG) || PERIOD_ENUM_STRING.contains(callData.toLowerCase())) {
                 log.debug("Ответ {} попал в формирование buttonTapCurrencyDelete", callData);
                 bot.execute(buttonHandler.buttonTapAlg(chatId, callData, messageId));
             }
-            if (callData.equals(OUTPUT) || Arrays.stream(Output.values()).map(Enum::toString).toList().toString().toLowerCase().contains(callData.toLowerCase()) || Arrays.stream(PredictAlgorithms.values()).map(Enum::toString).toList().toString().toLowerCase().contains(callData.toLowerCase())) {
+            if (callData.equals(OUTPUT) || OUTPUT_ENUM_STRING.contains(callData.toLowerCase()) || ALGORITHMS_ENUM_STRING.contains(callData.toLowerCase())) {
                 log.debug("Ответ {} попал в формирование buttonTapOutput", callData);
                 bot.execute(buttonHandler.buttonTapOutput(chatId, callData, messageId));
             }
@@ -98,11 +104,11 @@ public class UpdateHandler {
                 bot.execute(sender.editMessage(chatId, messageText, messageId));
                 bot.execute(sender.sendText(chatId, buttonHandler.buttonTapResult(chatId)));
             }
-            if (callData.equals(CURRENCIES) || Arrays.stream(Currency.values()).map(currency -> currency.toString().concat(ADD)).toList().toString().toLowerCase().contains(callData.toLowerCase()) || callData.equalsIgnoreCase(ADD)) {
+            if (callData.equals(CURRENCIES) || CURRENCY_ADD_ENUM_STRING.contains(callData.toLowerCase()) || callData.equalsIgnoreCase(ADD)) {
                 log.debug("Ответ {} попал в формирование buttonTapCurrency", callData);
                 bot.execute(buttonHandler.buttonTapCurrency(chatId, callData, messageId));
             }
-            if (callData.equalsIgnoreCase(DEL) || Arrays.stream(Currency.values()).map(currency -> currency.toString().concat(DEL)).toList().toString().toLowerCase().contains(callData.toLowerCase())) {
+            if (callData.equalsIgnoreCase(DEL) || CURRENCY_DEL_ENUM_STRING.contains(callData.toLowerCase())) {
                 log.debug("Ответ {} попал в формирование buttonTapCurrencyDelete", callData);
                 bot.execute(buttonHandler.buttonTapCurrencyDelete(chatId, callData, messageId));
             }
